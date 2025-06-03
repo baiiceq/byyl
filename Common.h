@@ -23,7 +23,7 @@ typedef enum _LexicalType //词汇类型
 	// 结束标志和错误标志
 	ENDFILE, ERROR,
 	// 保留字
-	IF, ELSE, INT, RETURN, VOID, WHILE,
+	IF, ELSE, INT, RETURN, VOID, WHILE, CHAR, STRING,
 	// 变量名和数字
 	ID, NUM,
 	// 特殊字符

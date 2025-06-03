@@ -4,9 +4,9 @@
 class LexicalAnalyser 
 {
 private:
-	ifstream src;
-	list<Token> token_list;
-	int line_count;
+	ifstream src;                // 文件源
+	list<Token> token_list;      // 词法分析结果
+	int line_count;              // 结果数量
 
 private:
 	void openFile(const char* path);
