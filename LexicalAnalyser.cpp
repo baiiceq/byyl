@@ -6,7 +6,7 @@ string token_to_string(Token t)
 	{
 	"ENDFILE", "ERROR",
 	"IF", "ELSE", "INT", "RETURN", "VOID", "WHILE", "CHAR", "STRING",
-	"ID", "NUM",
+	"ID", "NUM", "CHAR_VAL", "STRING_VAL",
 	"LBRACE", "RBRACE", "GTE", "LTE", "NEQ", "EQ", "ASSIGN", "LT", "GT", "PLUS", "MINUS", "MULT", "DIV", "LPAREN", "RPAREN", "SEMI", "COMMA",
 	"LCOMMENT", "PCOMMENT"
 	};

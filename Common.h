@@ -24,15 +24,15 @@ typedef enum _LexicalType //词汇类型
 	ENDFILE, ERROR,
 	// 保留字
 	IF, ELSE, INT, RETURN, VOID, WHILE, CHAR, STRING,
-	// 变量名和数字
-	ID, NUM,
+	// 变量名、数字、字符和字符串
+	ID, NUM, CHAR_VAL, STRING_VAL,
 	// 特殊字符
 	// {       }    >=   <=   !=   ==    =    <   >    +      -     *     /     (        )     ;     , 
 	LBRACE, RBRACE, GTE, LTE, NEQ, EQ, ASSIGN, LT, GT, PLUS, MINUS, MULT, DIV, LPAREN, RPAREN, SEMI, COMMA,
 	// 行注释  段注释
 	LCOMMENT, PCOMMENT,
 	// 换行符
-	NEXTLINE
+	NEXTLINE 
 } LexicalType;
 
 typedef pair<LexicalType, string> Token;
