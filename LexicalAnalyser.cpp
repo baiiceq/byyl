@@ -185,6 +185,68 @@ Token LexicalAnalyser::getNextToken()
 			}
 			break;
 		default:
+			if (c == '0' && (src.peek() == 'x' || src.peek() == 'X'))
+			{
+				src.get();
+				string str = "";
+				while (isxdigit(src.peek()))
+				{
+					str += src.peek();
+					src.get();
+				}
+				long long num = 0;
+				for (char a : str)
+				{
+					num *= 16;
+					if (c >= '0' && c <= '9') 
+					{
+						num += c - '0';
+					}
+					else if (c >= 'a' && c <= 'f') 
+					{
+						num += 10 + (c - 'a');
+					}
+					else if (c >= 'A' && c <= 'F') 
+					{
+						num += 10 + (c - 'A');
+					}
+				}
+				return Token(NUM_INT, to_string(num));
+			}
+			else if (c == '0' && (src.peek() == 'o' || src.peek() == 'O'))
+			{
+				src.get();
+				string str = "";
+				while (src.peek()>='0'&& src.peek()<='7')
+				{
+					str += src.peek();
+					src.get();
+				}
+				long long num = 0;
+				for (char a : str)
+				{
+					num *= 8;
+					num += a - '0';
+				}
+				return Token(NUM_INT, to_string(num));
+			}
+			else if (c == '0' && (src.peek() == 'b' || src.peek() == 'B'))
+			{
+				src.get();
+				string str = "";
+				while (src.peek() >= '0' && src.peek() <= '1')
+				{
+					str += src.peek();
+					src.get();
+				}
+				long long num = 0;
+				for (char a : str)
+				{
+					num *= 2;
+					num += a - '0';
+				}
+				return Token(NUM_INT, to_string(num));
+			}
 			if (isdigit(c))
 			{
 				string buf;
