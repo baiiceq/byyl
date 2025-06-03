@@ -1,10 +1,12 @@
 #include "IntermediateCode.h"
 
-NewLabeler::NewLabeler() {
+NewIndex::NewIndex()
+{
 	index = 1;
 }
 
-string NewLabeler::newLabel () {
+string NewIndex::newIndex()
+{
 	return string("Label") + to_string(index++);
 }
 
@@ -56,7 +58,7 @@ void IntermediateCode::divideBlocks(vector<pair<int, string> > funcEnter) {
 			}
 
 			if (!firstFlag) {//该基本块不是函数块的第一块基本块
-				block.name = nl.newLabel();
+				block.name = nl.newIndex();
 				labelEnter[lastEnter] = block.name;
 			}
 			else {//该基本块是函数块的第一块基本块
@@ -69,7 +71,7 @@ void IntermediateCode::divideBlocks(vector<pair<int, string> > funcEnter) {
 			block.codes.clear();
 		}
 		if (!firstFlag) {//该基本块不是函数块的第一块基本块
-			block.name = nl.newLabel();
+			block.name = nl.newIndex();
 			labelEnter[lastEnter] = block.name;
 		}
 		else {//该基本块是函数块的第一块基本块

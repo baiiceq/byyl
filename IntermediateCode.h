@@ -1,12 +1,14 @@
 #pragma once
 #include "Common.h"
 
-class NewLabeler {
+// µÚ¼¸ÐÐ
+class NewIndex
+{
+public:
+	NewIndex();
+	string newIndex();
 private:
 	int index;
-public:
-	NewLabeler();
-	string newLabel();
 };
 
 class IntermediateCode
@@ -14,7 +16,7 @@ class IntermediateCode
 private:
 	vector<Quaternary> code;
 	map<string, vector<Block> >funcBlocks;
-	NewLabeler nl;
+	NewIndex nl;
 
 	void output(ostream& out);
 	void outputBlocks(ostream& out);
