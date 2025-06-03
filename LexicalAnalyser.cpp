@@ -1,7 +1,9 @@
 #include "LexicalAnalyser.h"
 
-string token_to_string(Token t) {
-	const char* LexicalTypeStr[] = {
+string token_to_string(Token t) 
+{
+	const char* LexicalTypeStr[] =
+	{
 	"ENDFILE", "ERROR",
 	"IF", "ELSE", "INT", "RETURN", "VOID", "WHILE",
 	"ID", "NUM",
@@ -15,12 +17,14 @@ string token_to_string(Token t) {
 	return res;
 }
 
-LexicalAnalyser::LexicalAnalyser(const char* path) {
-	lineCount = 0;
+LexicalAnalyser::LexicalAnalyser(const char* path)
+{
+	line_count = 0;
 	openFile(path);
 }
 
-LexicalAnalyser::~LexicalAnalyser() {
+LexicalAnalyser::~LexicalAnalyser() 
+{
 	if (src.is_open()) 
 	{
 		src.close();
@@ -49,7 +53,7 @@ char LexicalAnalyser::getNextChar()
 		}
 		else if (c == '\n') 
 		{
-			lineCount++;
+			line_count++;
 			return '\n';
 		}
 		break;
@@ -60,9 +64,11 @@ char LexicalAnalyser::getNextChar()
 		return c;
 }
 
-Token LexicalAnalyser::getNextToken() {
+Token LexicalAnalyser::getNextToken()
+{
 	char c = getNextChar();
-	switch (c) {
+	switch (c)
+	{
 		case '\n':
 			return Token(NEXTLINE, "\n");
 		case '(':
@@ -96,162 +102,204 @@ Token LexicalAnalyser::getNextToken() {
 			return Token(SEMI, ";");
 			break;
 		case '=':
-			if (src.peek() == '=') {
+			if (src.peek() == '=') 
+			{
 				src.get();
 				return Token(EQ, "==");
 			}
-			else {
+			else 
+			{
 				return Token(ASSIGN, "=");
 			}
 			break;
 		case '>':
-			if (src.peek() == '=') {
+			if (src.peek() == '=')
+			{
 				src.get();
 				return Token(GTE, ">=");
 			}
-			else {
+			else 
+			{
 				return Token(GT, ">");
 			}
 			break;
 		case '<':
-			if (src.peek() == '=') {
+			if (src.peek() == '=') 
+			{
 				src.get();
 				return Token(LTE, "<=");
 			}
-			else {
+			else 
+			{
 				return Token(LT, "<");
 			}
 			break;
 		case '!':
-			if (src.peek() == '=') {
+			if (src.peek() == '=')
+			{
 				src.get();
 				return Token(NEQ, "!=");
 			}
-			else {
-				return Token(ERROR, string("词法分析第")+to_string(lineCount)+string("行：未识别的符号!"));
+			else 
+			{
+				return Token(ERROR, string("词法分析第")+to_string(line_count)+string("行：未识别的符号!"));
 			}
 			break;
 		case '/':
 			//行注释
-			if (src.peek() == '/') {
+			if (src.peek() == '/')
+			{
 				char buf[1024];
 				src.getline(buf, 1024);
 				return Token(LCOMMENT, string("/")+buf);
 			}
 			//段注释
-			else if (src.peek() == '*') {
+			else if (src.peek() == '*') 
+			{
 				src.get();
 				string buf = "/*";
-				while (src >> c) {
+				while (src >> c)
+				{
 					buf += c;
-					if (c == '*') {
+					if (c == '*') 
+					{
 						src >> c;
 						buf += c;
-						if (c == '/') {
+						if (c == '/')
+						{
 							return Token(PCOMMENT, buf);
 							break;
 						}
 					}
 				}
 				//读到最后都没找到*/，因不满足while循环条件退出
-				if (src.eof()) {
-					return Token(ERROR, string("词法分析第")+to_string(lineCount)+string("行：段注释没有匹配的*/"));
+				if (src.eof()) 
+				{
+					return Token(ERROR, string("词法分析第")+to_string(line_count)+string("行：段注释没有匹配的*/"));
 				}
 			}
 			//除法
-			else {
+			else 
+			{
 				return Token(DIV, "/");
 			}
 			break;
 		default:
-			if (isdigit(c)) {
+			if (isdigit(c))
+			{
 				string buf;
 				buf.push_back(c);
-				while (c=src.peek()) {
-					if (isdigit(c)) {
+				while (c=src.peek())
+				{
+					if (isdigit(c)) 
+					{
 						src >> c;
 						buf += c;
 					}
-					else {
+					else 
+					{
 						break;
 					}
 				}
 				return Token(NUM, buf);
 			}
-			else if (isalpha(c)) {
+			else if (isalpha(c)) 
+			{
 				string buf;
 				buf.push_back(c);
-				while (c = src.peek()) {
-					if (isdigit(c)||isalpha(c)) {
+				while (c = src.peek()) 
+				{
+					if (isdigit(c)||isalpha(c)) 
+					{
 						src >> c;
 						buf += c;
 					}
-					else {
+					else
+					{
 						break;
 					}
 				}
-				if (buf == "int") {
+				if (buf == "int") 
+				{
 					return Token(INT, "int");
 				}
-				else if (buf == "void") {
+				else if (buf == "void") 
+				{
 					return Token(VOID, "void");
 				}
-				else if (buf == "if") {
+				else if (buf == "if")
+				{
 					return Token(IF, "if");
 				}
-				else if (buf == "else") {
+				else if (buf == "else")
+				{
 					return Token(ELSE, "else");
 				}
-				else if (buf == "while") {
+				else if (buf == "while") 
+				{
 					return Token(WHILE, "while");
 				}
-				else if (buf == "return") {
+				else if (buf == "return") 
+				{
 					return Token(RETURN, "return");
 				}
-				else {
+				else 
+				{
 					return Token(ID, buf);
 				}
 			}
-			else {
-				return Token(ERROR, string("词法分析第") + to_string(lineCount) + string("行：未识别的符号") + c);
+			else
+			{
+				return Token(ERROR, string("词法分析第") + to_string(line_count) + string("行：未识别的符号") + c);
 			}
 	}
 	return Token(ERROR, "UNKOWN ERROR");
 }
 
-void LexicalAnalyser::analyse() {
-	while (1) {
+void LexicalAnalyser::analyse() 
+{
+	while (1)
+	{
 		Token t = getNextToken();
-		result.push_back(t);
-		if (t.first == ERROR) {
+		token_list.push_back(t);
+		if (t.first == ERROR) 
+		{
 			outputError(t.second);
 		}
-		else if (t.first == ENDFILE) {
+		else if (t.first == ENDFILE) 
+		{
 			break;
 		}
 	}
 }
 
-void LexicalAnalyser::outputToStream(ostream&out) {
-	if (result.back().first == ERROR) {
-		out << token_to_string(result.back())<<endl;
+void LexicalAnalyser::outputToStream(ostream&out)
+{
+	if (token_list.back().first == ERROR)
+	{
+		out << token_to_string(token_list.back())<<endl;
 	}
-	else {
+	else 
+	{
 		list<Token>::iterator iter;
-		for (iter = result.begin(); iter != result.end(); iter++) {
+		for (iter = token_list.begin(); iter != token_list.end(); iter++)
+		{
 			out << token_to_string(*iter) << endl;
 		}
 	}
 }
 
-void LexicalAnalyser::outputToScreen() {
+void LexicalAnalyser::outputToScreen() 
+{
 	outputToStream(cout);
 }
 
-void LexicalAnalyser::outputToFile(const char *fileName) {
+void LexicalAnalyser::outputToFile(const char *fileName) 
+{
 	ofstream fout;
 	fout.open(fileName, ios::out);
-	if (!fout.is_open()) {
+	if (!fout.is_open()) 
+	{
 		cerr << "file " << fileName << " open error" << endl;
 		return;
 	}
@@ -259,6 +307,7 @@ void LexicalAnalyser::outputToFile(const char *fileName) {
 	fout.close();
 }
 
-list<Token>&LexicalAnalyser::getResult() {
-	return result;
+list<Token>&LexicalAnalyser::getResult() 
+{
+	return token_list;
 }

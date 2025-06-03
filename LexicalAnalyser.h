@@ -5,8 +5,8 @@ class LexicalAnalyser
 {
 private:
 	ifstream src;
-	list<Token> result;
-	int lineCount;
+	list<Token> token_list;
+	int line_count;
 
 private:
 	void openFile(const char* path);
