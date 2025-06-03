@@ -3,6 +3,7 @@
 #include "IntermediateCode.h"
 #ifndef PARSER_H
 #define PARSER_H
+
 //符号
 class Symbol 
 {
@@ -23,7 +24,7 @@ enum DecType
 };
 
 //数据类型（int/void）
-enum DType { D_VOID, D_INT };
+enum DType { D_VOID, D_INT , D_CHAR};
 
 
 struct Var 

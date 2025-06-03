@@ -1,6 +1,7 @@
 #include "ParserAndSemanticAnalyser.h"
 
-list<int>merge(list<int>&l1, list<int>&l2) {
+list<int>merge(list<int>&l1, list<int>&l2) 
+{
 	list<int>ret;
 	ret.assign(l1.begin(), l1.end());
 	ret.splice(ret.end(), l2);
@@ -38,13 +39,19 @@ string NewTemper::newTemp() {
 	return string("T") + to_string(now++);
 }
 
-Symbol::Symbol() {}
+Symbol::Symbol() 
+{
+	isVt = false;
+	content = "";
+}
 
-Id::Id(const Symbol& sym, const string& name) : Symbol(sym) {
+Id::Id(const Symbol& sym, const string& name) : Symbol(sym) 
+{
 	this->name = name;
 }
 
-Num::Num(const Symbol& sym, const string& number) : Symbol(sym) {
+Num::Num(const Symbol& sym, const string& number) : Symbol(sym) 
+{
 	this->number = number;
 }
 
@@ -78,20 +85,25 @@ Factor::Factor(const Symbol& sym) : Symbol(sym) {}
 
 ArgumentList::ArgumentList(const Symbol& sym) : Symbol(sym) {}
 
-bool isVT(string s) {
-	if (s == "int" || s == "void" || s == "if" || s == "while" || s == "else" || s == "return") {
+bool isVT(string s)
+{
+	if (s == "int" || s == "void" || s == "if" || s == "while" || s == "else" || s == "return" || s == "float")
+	{
 		return true;
 	}
-	if (s == "+" || s == "-" || s == "*" || s == "/" || s == "=" || s == "==" || s == ">" || s == "<" || s == "!=" || s == ">=" || s == "<=") {
+	if (s == "+" || s == "-" || s == "*" || s == "/" || s == "=" || s == "==" || s == ">" || s == "<" || s == "!=" || s == ">=" || s == "<=")
+	{
 		return true;
 	}
-	if (s == ";" || s == "," || s == "(" || s == ")" || s == "{" || s == "}" || s == "ID" || s == "NUM") {
+	if (s == ";" || s == "," || s == "(" || s == ")" || s == "{" || s == "}" || s == "ID" || s == "NUM") 
+	{
 		return true;
 	}
 	return false;
 }
 
-ParserAndSemanticAnalyser::ParserAndSemanticAnalyser(const char*fileName) {
+ParserAndSemanticAnalyser::ParserAndSemanticAnalyser(const char*fileName) 
+{
 	readProductions(fileName);
 	getFirst();
 	getFollow();
@@ -99,9 +111,11 @@ ParserAndSemanticAnalyser::ParserAndSemanticAnalyser(const char*fileName) {
 	lineCount = 1;
 }
 
-void ParserAndSemanticAnalyser::getFirst() {
+void ParserAndSemanticAnalyser::getFirst() 
+{
 	bool changeFlag = true;
-	while (changeFlag) {
+	while (changeFlag) 
+	{
 		changeFlag = false;//first集改变标志
 		//遍历每一个产生式
 		for (vector<Production>::iterator iter = productions.begin(); iter != productions.end(); iter++) {
@@ -157,7 +171,8 @@ void ParserAndSemanticAnalyser::getFirst() {
 	}
 }
 
-void ParserAndSemanticAnalyser::getFollow() {
+void ParserAndSemanticAnalyser::getFollow()
+{
 	//将#放入起始符号的FOLLOW集中
 	follow[productions[0].left] = set<Symbol>();
 	follow[productions[0].left].insert(Symbol{ true,"#" });
@@ -225,7 +240,8 @@ void ParserAndSemanticAnalyser::getFollow() {
 	}
 }
 
-void ParserAndSemanticAnalyser::outputDFA(ostream& out) {
+void ParserAndSemanticAnalyser::outputDFA(ostream& out)
+{
 	int nowI = 0;
 	for (list<I>::iterator iter = dfa.stas.begin(); iter != dfa.stas.end(); iter++, nowI++) {
 		out << "I" << nowI << "= [";
@@ -248,11 +264,13 @@ void ParserAndSemanticAnalyser::outputDFA(ostream& out) {
 	}
 }
 
-void ParserAndSemanticAnalyser::outputDFA() {
+void ParserAndSemanticAnalyser::outputDFA()
+{
 	outputDFA(cout);
 }
 
-void ParserAndSemanticAnalyser::outputDFA(const char* fileName) {
+void ParserAndSemanticAnalyser::outputDFA(const char* fileName) 
+{
 	ofstream fout;
 	fout.open(fileName);
 	if (!fout.is_open()) {
@@ -263,19 +281,21 @@ void ParserAndSemanticAnalyser::outputDFA(const char* fileName) {
 	fout.close();
 }
 
-void ParserAndSemanticAnalyser::readProductions(const char*fileName) {
+void ParserAndSemanticAnalyser::readProductions(const char*fileName) 
+{
 	ifstream fin;
 
 	//文件打开处理
 	fin.open(fileName, ios::in);
-	if (!fin.is_open()) {
+	if (!fin.is_open())
+	{
 		outputError("文件" + string(fileName) + "打开失败");
 	}
 
-	//
 	int index = 0;//产生式序号
 	char buf[1024];
-	while (fin >> buf) {
+	while (fin >> buf) 
+	{
 		Production p;
 		//产生式序号赋值
 		p.id = index++;
@@ -517,8 +537,8 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out) {
 		if (LT == ID) {
 			nextSymbol = new Id(Symbol{ true,"ID" }, word);
 		}
-		else if (LT == NUM) {
-			nextSymbol = new Num(Symbol{ true,"NUM" }, word);
+		else if (LT == NUM_INT) {
+			nextSymbol = new Num(Symbol{ true,"NUM_INT" }, word);
 		}
 		else {
 			nextSymbol = new Symbol(true, word);

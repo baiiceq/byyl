@@ -5,8 +5,8 @@ string token_to_string(Token t)
 	const char* LexicalTypeStr[] =
 	{
 	"ENDFILE", "ERROR",
-	"IF", "ELSE", "INT", "RETURN", "VOID", "WHILE", "CHAR", "STRING", "FLOAT",
-	"ID", "NUM_INT", "NUM_FLOAT", "CHAR_VAL", "STRING_VAL",
+	"IF", "ELSE", "INT", "RETURN", "VOID", "WHILE", "CHAR", "FLOAT",
+	"ID", "NUM_INT", "NUM_FLOAT", "CHAR_VAL",
 	"LBRACE", "RBRACE", "GTE", "LTE", "NEQ", "EQ", "ASSIGN", "LT", "GT", "PLUS", "MINUS", "MULT", "DIV", "LPAREN", "RPAREN", "SEMI", "COMMA",
 	"LCOMMENT", "PCOMMENT"
 	};
