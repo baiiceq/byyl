@@ -9,7 +9,8 @@ public:
 	string newLabel();
 };
 
-class IntermediateCode {
+class IntermediateCode
+{
 private:
 	vector<Quaternary> code;
 	map<string, vector<Block> >funcBlocks;
