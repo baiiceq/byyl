@@ -1,0 +1,208 @@
+I0= [¡¾P -> . N declare_list ¡¿¡¾N -> . ¡¿]
+
+I1= [¡¾P -> N . declare_list ¡¿¡¾declare_list -> . declare declare_list ¡¿¡¾declare_list -> . declare ¡¿¡¾declare -> . int ID M A function_declare ¡¿¡¾declare -> . int ID var_declare ¡¿¡¾declare -> . void ID M A function_declare ¡¿]
+
+I2= [¡¾P -> N declare_list . ¡¿]
+
+I3= [¡¾declare_list -> . declare declare_list ¡¿¡¾declare_list -> declare . declare_list ¡¿¡¾declare_list -> . declare ¡¿¡¾declare_list -> declare . ¡¿¡¾declare -> . int ID M A function_declare ¡¿¡¾declare -> . int ID var_declare ¡¿¡¾declare -> . void ID M A function_declare ¡¿]
+
+I4= [¡¾declare -> int . ID M A function_declare ¡¿¡¾declare -> int . ID var_declare ¡¿]
+
+I5= [¡¾declare -> void . ID M A function_declare ¡¿]
+
+I6= [¡¾declare_list -> declare declare_list . ¡¿]
+
+I7= [¡¾declare -> int ID . M A function_declare ¡¿¡¾declare -> int ID . var_declare ¡¿¡¾var_declare -> . ; ¡¿¡¾M -> . ¡¿]
+
+I8= [¡¾declare -> void ID . M A function_declare ¡¿¡¾M -> . ¡¿]
+
+I9= [¡¾declare -> int ID M . A function_declare ¡¿¡¾A -> . ¡¿]
+
+I10= [¡¾declare -> int ID var_declare . ¡¿]
+
+I11= [¡¾var_declare -> ; . ¡¿]
+
+I12= [¡¾declare -> void ID M . A function_declare ¡¿¡¾A -> . ¡¿]
+
+I13= [¡¾declare -> int ID M A . function_declare ¡¿¡¾function_declare -> . ( parameter ) sentence_block ¡¿]
+
+I14= [¡¾declare -> void ID M A . function_declare ¡¿¡¾function_declare -> . ( parameter ) sentence_block ¡¿]
+
+I15= [¡¾declare -> int ID M A function_declare . ¡¿]
+
+I16= [¡¾function_declare -> ( . parameter ) sentence_block ¡¿¡¾parameter -> . parameter_list ¡¿¡¾parameter -> . void ¡¿¡¾parameter_list -> . param ¡¿¡¾parameter_list -> . param , parameter_list ¡¿¡¾param -> . int ID ¡¿]
+
+I17= [¡¾declare -> void ID M A function_declare . ¡¿]
+
+I18= [¡¾function_declare -> ( parameter . ) sentence_block ¡¿]
+
+I19= [¡¾parameter -> parameter_list . ¡¿]
+
+I20= [¡¾parameter -> void . ¡¿]
+
+I21= [¡¾parameter_list -> param . ¡¿¡¾parameter_list -> param . , parameter_list ¡¿]
+
+I22= [¡¾param -> int . ID ¡¿]
+
+I23= [¡¾function_declare -> ( parameter ) . sentence_block ¡¿¡¾sentence_block -> . { inner_declare sentence_list } ¡¿]
+
+I24= [¡¾parameter_list -> . param ¡¿¡¾parameter_list -> . param , parameter_list ¡¿¡¾parameter_list -> param , . parameter_list ¡¿¡¾param -> . int ID ¡¿]
+
+I25= [¡¾param -> int ID . ¡¿]
+
+I26= [¡¾function_declare -> ( parameter ) sentence_block . ¡¿]
+
+I27= [¡¾sentence_block -> { . inner_declare sentence_list } ¡¿¡¾inner_declare -> . ¡¿¡¾inner_declare -> . inner_var_declare ; inner_declare ¡¿¡¾inner_var_declare -> . int ID ¡¿]
+
+I28= [¡¾parameter_list -> param , parameter_list . ¡¿]
+
+I29= [¡¾sentence_block -> { inner_declare . sentence_list } ¡¿¡¾sentence_list -> . sentence M sentence_list ¡¿¡¾sentence_list -> . sentence ¡¿¡¾sentence -> . if_sentence ¡¿¡¾sentence -> . while_sentence ¡¿¡¾sentence -> . return_sentence ¡¿¡¾sentence -> . assign_sentence ¡¿¡¾assign_sentence -> . ID = expression ; ¡¿¡¾return_sentence -> . return ; ¡¿¡¾return_sentence -> . return expression ; ¡¿¡¾while_sentence -> . while M ( expression ) A sentence_block ¡¿¡¾if_sentence -> . if ( expression ) A sentence_block ¡¿¡¾if_sentence -> . if ( expression ) A sentence_block N else M A sentence_block ¡¿]
+
+I30= [¡¾inner_declare -> inner_var_declare . ; inner_declare ¡¿]
+
+I31= [¡¾inner_var_declare -> int . ID ¡¿]
+
+I32= [¡¾sentence_block -> { inner_declare sentence_list . } ¡¿]
+
+I33= [¡¾sentence_list -> sentence . M sentence_list ¡¿¡¾sentence_list -> sentence . ¡¿¡¾M -> . ¡¿]
+
+I34= [¡¾sentence -> if_sentence . ¡¿]
+
+I35= [¡¾sentence -> while_sentence . ¡¿]
+
+I36= [¡¾sentence -> return_sentence . ¡¿]
+
+I37= [¡¾sentence -> assign_sentence . ¡¿]
+
+I38= [¡¾assign_sentence -> ID . = expression ; ¡¿]
+
+I39= [¡¾return_sentence -> return . ; ¡¿¡¾return_sentence -> return . expression ; ¡¿¡¾expression -> . add_expression ¡¿¡¾expression -> . add_expression > add_expression ¡¿¡¾expression -> . add_expression < add_expression ¡¿¡¾expression -> . add_expression == add_expression ¡¿¡¾expression -> . add_expression >= add_expression ¡¿¡¾expression -> . add_expression <= add_expression ¡¿¡¾expression -> . add_expression != add_expression ¡¿¡¾add_expression -> . item ¡¿¡¾add_expression -> . item + add_expression ¡¿¡¾add_expression -> . item - add_expression ¡¿¡¾item -> . factor ¡¿¡¾item -> . factor * item ¡¿¡¾item -> . factor / item ¡¿¡¾factor -> . NUM ¡¿¡¾factor -> . ( expression ) ¡¿¡¾factor -> . ID ( argument_list ) ¡¿¡¾factor -> . ID ¡¿]
+
+I40= [¡¾while_sentence -> while . M ( expression ) A sentence_block ¡¿¡¾M -> . ¡¿]
+
+I41= [¡¾if_sentence -> if . ( expression ) A sentence_block ¡¿¡¾if_sentence -> if . ( expression ) A sentence_block N else M A sentence_block ¡¿]
+
+I42= [¡¾inner_declare -> . ¡¿¡¾inner_declare -> . inner_var_declare ; inner_declare ¡¿¡¾inner_declare -> inner_var_declare ; . inner_declare ¡¿¡¾inner_var_declare -> . int ID ¡¿]
+
+I43= [¡¾inner_var_declare -> int ID . ¡¿]
+
+I44= [¡¾sentence_block -> { inner_declare sentence_list } . ¡¿]
+
+I45= [¡¾sentence_list -> . sentence M sentence_list ¡¿¡¾sentence_list -> sentence M . sentence_list ¡¿¡¾sentence_list -> . sentence ¡¿¡¾sentence -> . if_sentence ¡¿¡¾sentence -> . while_sentence ¡¿¡¾sentence -> . return_sentence ¡¿¡¾sentence -> . assign_sentence ¡¿¡¾assign_sentence -> . ID = expression ; ¡¿¡¾return_sentence -> . return ; ¡¿¡¾return_sentence -> . return expression ; ¡¿¡¾while_sentence -> . while M ( expression ) A sentence_block ¡¿¡¾if_sentence -> . if ( expression ) A sentence_block ¡¿¡¾if_sentence -> . if ( expression ) A sentence_block N else M A sentence_block ¡¿]
+
+I46= [¡¾assign_sentence -> ID = . expression ; ¡¿¡¾expression -> . add_expression ¡¿¡¾expression -> . add_expression > add_expression ¡¿¡¾expression -> . add_expression < add_expression ¡¿¡¾expression -> . add_expression == add_expression ¡¿¡¾expression -> . add_expression >= add_expression ¡¿¡¾expression -> . add_expression <= add_expression ¡¿¡¾expression -> . add_expression != add_expression ¡¿¡¾add_expression -> . item ¡¿¡¾add_expression -> . item + add_expression ¡¿¡¾add_expression -> . item - add_expression ¡¿¡¾item -> . factor ¡¿¡¾item -> . factor * item ¡¿¡¾item -> . factor / item ¡¿¡¾factor -> . NUM ¡¿¡¾factor -> . ( expression ) ¡¿¡¾factor -> . ID ( argument_list ) ¡¿¡¾factor -> . ID ¡¿]
+
+I47= [¡¾return_sentence -> return ; . ¡¿]
+
+I48= [¡¾return_sentence -> return expression . ; ¡¿]
+
+I49= [¡¾expression -> add_expression . ¡¿¡¾expression -> add_expression . > add_expression ¡¿¡¾expression -> add_expression . < add_expression ¡¿¡¾expression -> add_expression . == add_expression ¡¿¡¾expression -> add_expression . >= add_expression ¡¿¡¾expression -> add_expression . <= add_expression ¡¿¡¾expression -> add_expression . != add_expression ¡¿]
+
+I50= [¡¾add_expression -> item . ¡¿¡¾add_expression -> item . + add_expression ¡¿¡¾add_expression -> item . - add_expression ¡¿]
+
+I51= [¡¾item -> factor . ¡¿¡¾item -> factor . * item ¡¿¡¾item -> factor . / item ¡¿]
+
+I52= [¡¾factor -> NUM . ¡¿]
+
+I53= [¡¾expression -> . add_expression ¡¿¡¾expression -> . add_expression > add_expression ¡¿¡¾expression -> . add_expression < add_expression ¡¿¡¾expression -> . add_expression == add_expression ¡¿¡¾expression -> . add_expression >= add_expression ¡¿¡¾expression -> . add_expression <= add_expression ¡¿¡¾expression -> . add_expression != add_expression ¡¿¡¾add_expression -> . item ¡¿¡¾add_expression -> . item + add_expression ¡¿¡¾add_expression -> . item - add_expression ¡¿¡¾item -> . factor ¡¿¡¾item -> . factor * item ¡¿¡¾item -> . factor / item ¡¿¡¾factor -> . NUM ¡¿¡¾factor -> . ( expression ) ¡¿¡¾factor -> ( . expression ) ¡¿¡¾factor -> . ID ( argument_list ) ¡¿¡¾factor -> . ID ¡¿]
+
+I54= [¡¾factor -> ID . ( argument_list ) ¡¿¡¾factor -> ID . ¡¿]
+
+I55= [¡¾while_sentence -> while M . ( expression ) A sentence_block ¡¿]
+
+I56= [¡¾if_sentence -> if ( . expression ) A sentence_block ¡¿¡¾if_sentence -> if ( . expression ) A sentence_block N else M A sentence_block ¡¿¡¾expression -> . add_expression ¡¿¡¾expression -> . add_expression > add_expression ¡¿¡¾expression -> . add_expression < add_expression ¡¿¡¾expression -> . add_expression == add_expression ¡¿¡¾expression -> . add_expression >= add_expression ¡¿¡¾expression -> . add_expression <= add_expression ¡¿¡¾expression -> . add_expression != add_expression ¡¿¡¾add_expression -> . item ¡¿¡¾add_expression -> . item + add_expression ¡¿¡¾add_expression -> . item - add_expression ¡¿¡¾item -> . factor ¡¿¡¾item -> . factor * item ¡¿¡¾item -> . factor / item ¡¿¡¾factor -> . NUM ¡¿¡¾factor -> . ( expression ) ¡¿¡¾factor -> . ID ( argument_list ) ¡¿¡¾factor -> . ID ¡¿]
+
+I57= [¡¾inner_declare -> inner_var_declare ; inner_declare . ¡¿]
+
+I58= [¡¾sentence_list -> sentence M sentence_list . ¡¿]
+
+I59= [¡¾assign_sentence -> ID = expression . ; ¡¿]
+
+I60= [¡¾return_sentence -> return expression ; . ¡¿]
+
+I61= [¡¾expression -> add_expression > . add_expression ¡¿¡¾add_expression -> . item ¡¿¡¾add_expression -> . item + add_expression ¡¿¡¾add_expression -> . item - add_expression ¡¿¡¾item -> . factor ¡¿¡¾item -> . factor * item ¡¿¡¾item -> . factor / item ¡¿¡¾factor -> . NUM ¡¿¡¾factor -> . ( expression ) ¡¿¡¾factor -> . ID ( argument_list ) ¡¿¡¾factor -> . ID ¡¿]
+
+I62= [¡¾expression -> add_expression < . add_expression ¡¿¡¾add_expression -> . item ¡¿¡¾add_expression -> . item + add_expression ¡¿¡¾add_expression -> . item - add_expression ¡¿¡¾item -> . factor ¡¿¡¾item -> . factor * item ¡¿¡¾item -> . factor / item ¡¿¡¾factor -> . NUM ¡¿¡¾factor -> . ( expression ) ¡¿¡¾factor -> . ID ( argument_list ) ¡¿¡¾factor -> . ID ¡¿]
+
+I63= [¡¾expression -> add_expression == . add_expression ¡¿¡¾add_expression -> . item ¡¿¡¾add_expression -> . item + add_expression ¡¿¡¾add_expression -> . item - add_expression ¡¿¡¾item -> . factor ¡¿¡¾item -> . factor * item ¡¿¡¾item -> . factor / item ¡¿¡¾factor -> . NUM ¡¿¡¾factor -> . ( expression ) ¡¿¡¾factor -> . ID ( argument_list ) ¡¿¡¾factor -> . ID ¡¿]
+
+I64= [¡¾expression -> add_expression >= . add_expression ¡¿¡¾add_expression -> . item ¡¿¡¾add_expression -> . item + add_expression ¡¿¡¾add_expression -> . item - add_expression ¡¿¡¾item -> . factor ¡¿¡¾item -> . factor * item ¡¿¡¾item -> . factor / item ¡¿¡¾factor -> . NUM ¡¿¡¾factor -> . ( expression ) ¡¿¡¾factor -> . ID ( argument_list ) ¡¿¡¾factor -> . ID ¡¿]
+
+I65= [¡¾expression -> add_expression <= . add_expression ¡¿¡¾add_expression -> . item ¡¿¡¾add_expression -> . item + add_expression ¡¿¡¾add_expression -> . item - add_expression ¡¿¡¾item -> . factor ¡¿¡¾item -> . factor * item ¡¿¡¾item -> . factor / item ¡¿¡¾factor -> . NUM ¡¿¡¾factor -> . ( expression ) ¡¿¡¾factor -> . ID ( argument_list ) ¡¿¡¾factor -> . ID ¡¿]
+
+I66= [¡¾expression -> add_expression != . add_expression ¡¿¡¾add_expression -> . item ¡¿¡¾add_expression -> . item + add_expression ¡¿¡¾add_expression -> . item - add_expression ¡¿¡¾item -> . factor ¡¿¡¾item -> . factor * item ¡¿¡¾item -> . factor / item ¡¿¡¾factor -> . NUM ¡¿¡¾factor -> . ( expression ) ¡¿¡¾factor -> . ID ( argument_list ) ¡¿¡¾factor -> . ID ¡¿]
+
+I67= [¡¾add_expression -> . item ¡¿¡¾add_expression -> . item + add_expression ¡¿¡¾add_expression -> item + . add_expression ¡¿¡¾add_expression -> . item - add_expression ¡¿¡¾item -> . factor ¡¿¡¾item -> . factor * item ¡¿¡¾item -> . factor / item ¡¿¡¾factor -> . NUM ¡¿¡¾factor -> . ( expression ) ¡¿¡¾factor -> . ID ( argument_list ) ¡¿¡¾factor -> . ID ¡¿]
+
+I68= [¡¾add_expression -> . item ¡¿¡¾add_expression -> . item + add_expression ¡¿¡¾add_expression -> . item - add_expression ¡¿¡¾add_expression -> item - . add_expression ¡¿¡¾item -> . factor ¡¿¡¾item -> . factor * item ¡¿¡¾item -> . factor / item ¡¿¡¾factor -> . NUM ¡¿¡¾factor -> . ( expression ) ¡¿¡¾factor -> . ID ( argument_list ) ¡¿¡¾factor -> . ID ¡¿]
+
+I69= [¡¾item -> . factor ¡¿¡¾item -> . factor * item ¡¿¡¾item -> factor * . item ¡¿¡¾item -> . factor / item ¡¿¡¾factor -> . NUM ¡¿¡¾factor -> . ( expression ) ¡¿¡¾factor -> . ID ( argument_list ) ¡¿¡¾factor -> . ID ¡¿]
+
+I70= [¡¾item -> . factor ¡¿¡¾item -> . factor * item ¡¿¡¾item -> . factor / item ¡¿¡¾item -> factor / . item ¡¿¡¾factor -> . NUM ¡¿¡¾factor -> . ( expression ) ¡¿¡¾factor -> . ID ( argument_list ) ¡¿¡¾factor -> . ID ¡¿]
+
+I71= [¡¾factor -> ( expression . ) ¡¿]
+
+I72= [¡¾expression -> . add_expression ¡¿¡¾expression -> . add_expression > add_expression ¡¿¡¾expression -> . add_expression < add_expression ¡¿¡¾expression -> . add_expression == add_expression ¡¿¡¾expression -> . add_expression >= add_expression ¡¿¡¾expression -> . add_expression <= add_expression ¡¿¡¾expression -> . add_expression != add_expression ¡¿¡¾add_expression -> . item ¡¿¡¾add_expression -> . item + add_expression ¡¿¡¾add_expression -> . item - add_expression ¡¿¡¾item -> . factor ¡¿¡¾item -> . factor * item ¡¿¡¾item -> . factor / item ¡¿¡¾factor -> . NUM ¡¿¡¾factor -> . ( expression ) ¡¿¡¾factor -> . ID ( argument_list ) ¡¿¡¾factor -> ID ( . argument_list ) ¡¿¡¾factor -> . ID ¡¿¡¾argument_list -> . ¡¿¡¾argument_list -> . expression ¡¿¡¾argument_list -> . expression , argument_list ¡¿]
+
+I73= [¡¾while_sentence -> while M ( . expression ) A sentence_block ¡¿¡¾expression -> . add_expression ¡¿¡¾expression -> . add_expression > add_expression ¡¿¡¾expression -> . add_expression < add_expression ¡¿¡¾expression -> . add_expression == add_expression ¡¿¡¾expression -> . add_expression >= add_expression ¡¿¡¾expression -> . add_expression <= add_expression ¡¿¡¾expression -> . add_expression != add_expression ¡¿¡¾add_expression -> . item ¡¿¡¾add_expression -> . item + add_expression ¡¿¡¾add_expression -> . item - add_expression ¡¿¡¾item -> . factor ¡¿¡¾item -> . factor * item ¡¿¡¾item -> . factor / item ¡¿¡¾factor -> . NUM ¡¿¡¾factor -> . ( expression ) ¡¿¡¾factor -> . ID ( argument_list ) ¡¿¡¾factor -> . ID ¡¿]
+
+I74= [¡¾if_sentence -> if ( expression . ) A sentence_block ¡¿¡¾if_sentence -> if ( expression . ) A sentence_block N else M A sentence_block ¡¿]
+
+I75= [¡¾assign_sentence -> ID = expression ; . ¡¿]
+
+I76= [¡¾expression -> add_expression > add_expression . ¡¿]
+
+I77= [¡¾expression -> add_expression < add_expression . ¡¿]
+
+I78= [¡¾expression -> add_expression == add_expression . ¡¿]
+
+I79= [¡¾expression -> add_expression >= add_expression . ¡¿]
+
+I80= [¡¾expression -> add_expression <= add_expression . ¡¿]
+
+I81= [¡¾expression -> add_expression != add_expression . ¡¿]
+
+I82= [¡¾add_expression -> item + add_expression . ¡¿]
+
+I83= [¡¾add_expression -> item - add_expression . ¡¿]
+
+I84= [¡¾item -> factor * item . ¡¿]
+
+I85= [¡¾item -> factor / item . ¡¿]
+
+I86= [¡¾factor -> ( expression ) . ¡¿]
+
+I87= [¡¾factor -> ID ( argument_list . ) ¡¿]
+
+I88= [¡¾argument_list -> expression . ¡¿¡¾argument_list -> expression . , argument_list ¡¿]
+
+I89= [¡¾while_sentence -> while M ( expression . ) A sentence_block ¡¿]
+
+I90= [¡¾A -> . ¡¿¡¾if_sentence -> if ( expression ) . A sentence_block ¡¿¡¾if_sentence -> if ( expression ) . A sentence_block N else M A sentence_block ¡¿]
+
+I91= [¡¾factor -> ID ( argument_list ) . ¡¿]
+
+I92= [¡¾expression -> . add_expression ¡¿¡¾expression -> . add_expression > add_expression ¡¿¡¾expression -> . add_expression < add_expression ¡¿¡¾expression -> . add_expression == add_expression ¡¿¡¾expression -> . add_expression >= add_expression ¡¿¡¾expression -> . add_expression <= add_expression ¡¿¡¾expression -> . add_expression != add_expression ¡¿¡¾add_expression -> . item ¡¿¡¾add_expression -> . item + add_expression ¡¿¡¾add_expression -> . item - add_expression ¡¿¡¾item -> . factor ¡¿¡¾item -> . factor * item ¡¿¡¾item -> . factor / item ¡¿¡¾factor -> . NUM ¡¿¡¾factor -> . ( expression ) ¡¿¡¾factor -> . ID ( argument_list ) ¡¿¡¾factor -> . ID ¡¿¡¾argument_list -> . ¡¿¡¾argument_list -> . expression ¡¿¡¾argument_list -> . expression , argument_list ¡¿¡¾argument_list -> expression , . argument_list ¡¿]
+
+I93= [¡¾A -> . ¡¿¡¾while_sentence -> while M ( expression ) . A sentence_block ¡¿]
+
+I94= [¡¾sentence_block -> . { inner_declare sentence_list } ¡¿¡¾if_sentence -> if ( expression ) A . sentence_block ¡¿¡¾if_sentence -> if ( expression ) A . sentence_block N else M A sentence_block ¡¿]
+
+I95= [¡¾argument_list -> expression , argument_list . ¡¿]
+
+I96= [¡¾sentence_block -> . { inner_declare sentence_list } ¡¿¡¾while_sentence -> while M ( expression ) A . sentence_block ¡¿]
+
+I97= [¡¾if_sentence -> if ( expression ) A sentence_block . ¡¿¡¾if_sentence -> if ( expression ) A sentence_block . N else M A sentence_block ¡¿¡¾N -> . ¡¿]
+
+I98= [¡¾while_sentence -> while M ( expression ) A sentence_block . ¡¿]
+
+I99= [¡¾if_sentence -> if ( expression ) A sentence_block N . else M A sentence_block ¡¿]
+
+I100= [¡¾if_sentence -> if ( expression ) A sentence_block N else . M A sentence_block ¡¿¡¾M -> . ¡¿]
+
+I101= [¡¾A -> . ¡¿¡¾if_sentence -> if ( expression ) A sentence_block N else M . A sentence_block ¡¿]
+
+I102= [¡¾sentence_block -> . { inner_declare sentence_list } ¡¿¡¾if_sentence -> if ( expression ) A sentence_block N else M A . sentence_block ¡¿]
+
+I103= [¡¾if_sentence -> if ( expression ) A sentence_block N else M A sentence_block . ¡¿]
+
