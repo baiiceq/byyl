@@ -4,7 +4,7 @@
 int main() {
 
 	
-	ParserAndSemanticAnalyser parserAndSemanticAnalyser("productions.txt");//Iamashabi
+	ParserAndSemanticAnalyser parserAndSemanticAnalyser("productions.txt");
 	parserAndSemanticAnalyser.outputDFA("DFA.txt");
 	//parserAndSemanticAnalyser.analyse(lexicalAnalyser.getResult(), "SLR1_analyse.txt");
 	////parserAndSemanticAnalyser.outputIntermediateCode();

@@ -5,8 +5,8 @@ string token_to_string(Token t)
 	const char* LexicalTypeStr[] =
 	{
 	"ENDFILE", "ERROR",
-	"IF", "ELSE", "INT", "RETURN", "VOID", "WHILE", "CHAR", "STRING",
-	"ID", "NUM", "CHAR_VAL", "STRING_VAL",
+	"IF", "ELSE", "INT", "RETURN", "VOID", "WHILE", "CHAR", "STRING", "FLOAT",
+	"ID", "NUM_INT", "NUM_FLOAT", "CHAR_VAL", "STRING_VAL",
 	"LBRACE", "RBRACE", "GTE", "LTE", "NEQ", "EQ", "ASSIGN", "LT", "GT", "PLUS", "MINUS", "MULT", "DIV", "LPAREN", "RPAREN", "SEMI", "COMMA",
 	"LCOMMENT", "PCOMMENT"
 	};
@@ -201,7 +201,7 @@ Token LexicalAnalyser::getNextToken()
 						break;
 					}
 				}
-				return Token(NUM, buf);
+				return Token(NUM_INT, buf);
 			}
 			else if (isalpha(c)) 
 			{

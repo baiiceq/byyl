@@ -4,7 +4,8 @@
 #ifndef PARSER_H
 #define PARSER_H
 //符号
-class Symbol {
+class Symbol 
+{
 public:
 	bool isVt;//是否为终结符
 	string content;//内容
@@ -16,7 +17,8 @@ public:
 };
 
 //声明类型（变量声明/函数声明）
-enum DecType {
+enum DecType 
+{
 	DEC_VAR,DEC_FUN
 };
 
@@ -24,123 +26,144 @@ enum DecType {
 enum DType { D_VOID, D_INT };
 
 
-struct Var {
+struct Var 
+{
 	string name;
 	DType type;
 	int level;
 };
 
-struct Func {
+struct Func 
+{
 	string name;
 	DType returnType;
 	list<DType> paramTypes;
 	int enterPoint;
 };
 
-class Id :public Symbol {
+class Id :public Symbol 
+{
 public:
 	string name;
 	Id(const Symbol& sym, const string& name);
 };
 
-class Num :public Symbol {
+class Num :public Symbol 
+{
 public:
 	string number;
 	Num(const Symbol& sym,const string& number);
 };
 
-class FunctionDeclare :public Symbol {
+class FunctionDeclare :public Symbol 
+{
 public:
 	list<DType>plist;
 	FunctionDeclare(const Symbol& sym);
 };
 
-class Parameter :public Symbol {
+class Parameter :public Symbol
+{
 public:
 	list<DType>plist;
 	Parameter(const Symbol& sym);
 };
 
-class ParameterList :public Symbol {
+class ParameterList :public Symbol 
+{
 public:
 	list<DType>plist;
 	ParameterList(const Symbol& sym);
 };
 
-class SentenceBlock :public Symbol {
+class SentenceBlock :public Symbol 
+{
 public:
 	list<int>nextList;
 	SentenceBlock(const Symbol& sym);
 };
 
-class SentenceList :public Symbol {
+class SentenceList :public Symbol
+{
 public:
 	list<int>nextList;
 	SentenceList(const Symbol& sym);
 };
 
-class Sentence :public Symbol {
+
+class Sentence :public Symbol
+{
 public:
 	list<int>nextList;
 	Sentence(const Symbol& sym);
 };
 
-class WhileSentence :public Symbol {
+class WhileSentence :public Symbol
+{
 public:
 	list<int>nextList;
 	WhileSentence(const Symbol& sym);
 };
 
-class IfSentence :public Symbol {
+class IfSentence :public Symbol 
+{
 public:
 	list<int>nextList;
 	IfSentence(const Symbol& sym);
 };
 
-class Expression :public Symbol {
+class Expression :public Symbol 
+{
 public:
 	string name;
 	list<int>falseList;
 	Expression(const Symbol& sym);
 };
 
-class M :public Symbol {
+class M :public Symbol
+{
 public:
 	int quad;
 	M(const Symbol& sym);
 };
 
-class N :public Symbol {
+class N :public Symbol 
+{
 public:
 	list<int> nextList;
 	N(const Symbol& sym);
 };
 
-class AddExpression :public Symbol {
+class AddExpression :public Symbol 
+{
 public:
 	string name;
 	AddExpression(const Symbol& sym);
 };
 
-class Nomial :public Symbol {
+class Nomial :public Symbol
+{
 public:
 	string name;
 	Nomial(const Symbol& sym);
 };
 
-class Factor :public Symbol {
+class Factor :public Symbol
+{
 public:
 	string name;
 	Factor(const Symbol& sym);
 };
 
-class ArgumentList :public Symbol {
+class ArgumentList :public Symbol 
+{
 public:
 	list<string> alist;
 	ArgumentList(const Symbol& sym);
 };
 
-const Symbol symbol[] = { 
+const Symbol symbol[] = 
+{ 
 	{true,"int"},{true,"void"},{true,"if"},{true,"else"},{true,"while"},{true,"return"},
 	{true,"+"},{true,"-"},{true,"*"},{true,"/"},{true,"="},
 	{true,"=="},{true,">"},{true,"<"},{true,"!="},{true,">="},{true,"<="},
@@ -149,14 +172,16 @@ const Symbol symbol[] = {
 };
 
 //产生式
-struct Production {
+struct Production 
+{
 	int id;//产生式的标识id，方便比较
 	Symbol left;
 	vector<Symbol>right;
 };
 
 //项目
-struct Item {
+struct Item 
+{
 	int pro;//产生式id
 	int pointPos;//.的位置
 	friend bool operator ==(const Item&one, const Item& other);
@@ -164,13 +189,15 @@ struct Item {
 };
 
 //DFA状态
-struct I {
+struct I 
+{
 	set<Item> items;
 };
 
 typedef pair<int, Symbol> GOTO;
 
-struct DFA {
+struct DFA 
+{
 	list<I> stas;
 	map<GOTO, int> goTo;
 };
@@ -181,7 +208,8 @@ struct Behavior {
 	int nextStat;
 };
 
-class NewTemper {
+class NewTemper 
+{
 private:
 	int now;
 public:
@@ -189,7 +217,8 @@ public:
 	string newTemp();
 };
 
-class ParserAndSemanticAnalyser {
+class ParserAndSemanticAnalyser
+{
 private:
 	int lineCount;
 	int nowLevel;//当前分析行所在的语句块级次

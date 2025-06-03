@@ -23,9 +23,9 @@ typedef enum _LexicalType //词汇类型
 	// 结束标志和错误标志
 	ENDFILE, ERROR,
 	// 保留字
-	IF, ELSE, INT, RETURN, VOID, WHILE, CHAR, STRING,
+	IF, ELSE, INT, RETURN, VOID, WHILE, CHAR, STRING, FLOAT,
 	// 变量名、数字、字符和字符串
-	ID, NUM, CHAR_VAL, STRING_VAL,
+	ID, NUM_INT, NUM_FLOAT, CHAR_VAL, STRING_VAL,
 	// 特殊字符
 	// {       }    >=   <=   !=   ==    =    <   >    +      -     *     /     (        )     ;     , 
 	LBRACE, RBRACE, GTE, LTE, NEQ, EQ, ASSIGN, LT, GT, PLUS, MINUS, MULT, DIV, LPAREN, RPAREN, SEMI, COMMA,
