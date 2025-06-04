@@ -29,11 +29,11 @@ int demo(int a)
 
 void main(void)
 {
-	int ab;
+	int a;
 	int b;
 	int c;
-	a=31;
-	b=4;
+	a=3e1;
+	b=-4;
 	c=2;
 	a=program(a,b,demo(c));
 	return;

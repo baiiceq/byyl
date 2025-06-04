@@ -24,7 +24,7 @@ enum DecType
 };
 
 //数据类型（int/void）
-enum DType { D_VOID, D_INT , D_CHAR};
+enum DType { D_VOID, D_INT, D_CHAR，D_FLOAT };
 
 
 struct Var 
@@ -49,11 +49,25 @@ public:
 	Id(const Symbol& sym, const string& name);
 };
 
-class Num :public Symbol 
+class NumInt :public Symbol 
 {
 public:
 	string number;
-	Num(const Symbol& sym,const string& number);
+	NumInt(const Symbol& sym,const string& number);
+};
+
+class NumFloat :public Symbol
+{
+public:
+	string number;
+	NumFloat(const Symbol& sym, const string& number);
+};
+
+class Char :public Symbol
+{
+public:
+	string character;
+	Char(const Symbol& sym, const string& character);
 };
 
 class FunctionDeclare :public Symbol 
@@ -204,7 +218,8 @@ struct DFA
 };
 
 enum Behave { reduct, shift, accept, error};
-struct Behavior {
+struct Behavior 
+{
 	Behave behavior;
 	int nextStat;
 };
