@@ -249,7 +249,8 @@ Token LexicalAnalyser::getNextToken()
 			}
 			if (isdigit(c))
 			{
-				string buf, buf1;
+				bool flag_float = 0;
+				string buf;
 				buf.push_back(c);
 				while (c=src.peek())
 				{
@@ -263,15 +264,33 @@ Token LexicalAnalyser::getNextToken()
 						break;
 					}
 				}
+				if (c == '.')
+				{
+					flag_float = 1;
+					buf += '.';
+					src.get();
+					while (c = src.peek())
+					{
+						if (isdigit(c))
+						{
+							src >> c;
+							buf += c;
+						}
+						else
+						{
+							break;
+						}
+					}
+				}
 				if (c == 'e' || c == 'E')
 				{
 					bool flag = false;
 					src.get();
-					buf1.push_back('e');
+					buf += 'e';
 					if (src.peek() == '-' && !flag)
 					{
 						src.get();
-						buf1 += '-';
+						buf += '-';
 						flag = 1;
 					}
 					else if (src.peek() == '-' && flag)
@@ -290,7 +309,10 @@ Token LexicalAnalyser::getNextToken()
 							break;
 						}
 					}
-					buf += buf1;
+					return Token(NUM_FLOAT, buf);
+				}
+				if (flag_float)
+				{
 					return Token(NUM_FLOAT, buf);
 				}
 				return Token(NUM_INT, buf);
@@ -352,8 +374,7 @@ Token LexicalAnalyser::getNextToken()
 			{
 				char buf;
 				src >> buf;
-				cout << buf << endl;
-				if (src.get() != '\'')
+				if (src.get()!= '\'')
 				{
 					return Token(ERROR, string("ÐÐ") + to_string(line_count) + string("×Ö·û±íÊ¾´íÎó"));
 				}
