@@ -297,6 +297,10 @@ Token LexicalAnalyser::getNextToken()
 				{
 					return Token(ELSE, "else");
 				}
+				else if (buf == "float")
+				{
+					return Token(FLOAT, "float");
+				}
 				else if (buf == "while") 
 				{
 					return Token(WHILE, "while");
