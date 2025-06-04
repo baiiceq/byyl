@@ -352,7 +352,8 @@ Token LexicalAnalyser::getNextToken()
 			{
 				char buf;
 				src >> buf;
-				if (src.peek() != '\'')
+				cout << buf << endl;
+				if (src.get() != '\'')
 				{
 					return Token(ERROR, string("ÐÐ") + to_string(line_count) + string("×Ö·û±íÊ¾´íÎó"));
 				}
