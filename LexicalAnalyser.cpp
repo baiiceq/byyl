@@ -249,7 +249,7 @@ Token LexicalAnalyser::getNextToken()
 			}
 			if (isdigit(c))
 			{
-				string buf;
+				string buf, buf1;
 				buf.push_back(c);
 				while (c=src.peek())
 				{
@@ -262,6 +262,31 @@ Token LexicalAnalyser::getNextToken()
 					{
 						break;
 					}
+				}
+				if (c == 'e' || c == 'E')
+				{
+					bool flag = false;
+					src.get();
+					buf1.push_back('e');
+					if (src.peek() == '-')
+					{
+						src.get();
+						buf1 += '-';
+					}
+					while (c = src.peek())
+					{
+						if (isdigit(c))
+						{
+							src >> c;
+							buf += c;
+						}
+						else
+						{
+							break;
+						}
+					}
+					buf += buf1;
+					return Token(NUM_FLOAT, buf);
 				}
 				return Token(NUM_INT, buf);
 			}
