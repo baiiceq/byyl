@@ -268,10 +268,15 @@ Token LexicalAnalyser::getNextToken()
 					bool flag = false;
 					src.get();
 					buf1.push_back('e');
-					if (src.peek() == '-')
+					if (src.peek() == '-' && !flag)
 					{
 						src.get();
 						buf1 += '-';
+						flag = 1;
+					}
+					else if (src.peek() == '-' && flag)
+					{
+						return Token(ERROR, string("行") + to_string(line_count) + string("科学计数法表示错误"));
 					}
 					while (c = src.peek())
 					{
@@ -342,6 +347,18 @@ Token LexicalAnalyser::getNextToken()
 				{
 					return Token(ID, buf);
 				}
+			}
+			else if (c == '\'')
+			{
+				char buf;
+				src >> buf;
+				if (src.peek() != '\'')
+				{
+					return Token(ERROR, string("行") + to_string(line_count) + string("字符表示错误"));
+				}
+				int a = buf;
+				string buf1 = to_string(a);
+				return Token(CHAR, buf1);
 			}
 			else
 			{
