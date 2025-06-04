@@ -105,7 +105,7 @@ ArgumentList::ArgumentList(const Symbol& sym) : Symbol(sym) {}
 
 bool isVT(string s)
 {
-	if (s == "int" || s == "void" || s == "if" || s == "while" || s == "else" || s == "return" || s == "float")
+	if (s == "int" || s == "void" || s == "if" || s == "while" || s == "else" || s == "return" || s == "float" || s == "char")
 	{
 		return true;
 	}
@@ -604,11 +604,13 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 		//ºöÂÔÐÐ×¢ÊÍºÍ¶Î×¢ÊÍ
 		if (LT == LCOMMENT || LT == PCOMMENT) 
 		{
+			iter++;
 			continue;
 		}
 		if (LT == NEXTLINE) 
 		{
 			lineCount++;
+			iter++;
 			continue;
 		}
 
@@ -625,14 +627,16 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 		{
 			nextSymbol = new NumFloat(Symbol{ true,"NUM_FLOAT" }, word);
 		}
-		else if (LT == CHAR)
+		else if (LT == CHAR_VAL)
 		{
-			nextSymbol = new Char(Symbol{ true,"CHAR" }, word);
+			nextSymbol = new Char(Symbol{ true,"CHAR_VAL" }, word);
 		}
 		else 
 		{
 			nextSymbol = new Symbol(true, word);
 		}
+
+		auto x = staStack.top();
 
 		if (SLR1_Table.count(GOTO(staStack.top(), *nextSymbol)) == 0) 
 		{
@@ -1142,7 +1146,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(factor);
 					break;
 				}
-				case 55://factor ::= NUM_CHAR
+				case 55://factor ::= CHAR_VAL
 				{
 					Char* _char = (Char*)popSymbol();
 					Factor* factor = new Factor(reductPro.left);

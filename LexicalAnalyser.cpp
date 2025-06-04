@@ -1,4 +1,5 @@
 #include "LexicalAnalyser.h"
+#include <string>
 
 string token_to_string(Token t) 
 {
@@ -8,12 +9,19 @@ string token_to_string(Token t)
 	"IF", "ELSE", "INT", "RETURN", "VOID", "WHILE", "CHAR", "FLOAT",
 	"ID", "NUM_INT", "NUM_FLOAT", "CHAR_VAL",
 	"LBRACE", "RBRACE", "GTE", "LTE", "NEQ", "EQ", "ASSIGN", "LT", "GT", "PLUS", "MINUS", "MULT", "DIV", "LPAREN", "RPAREN", "SEMI", "COMMA",
-	"LCOMMENT", "PCOMMENT"
+	"LCOMMENT", "PCOMMENT", "NEXTLINE"
 	};
 
 	string res;
 	res += LexicalTypeStr[t.first];
-	res += "  " + t.second;
+	if (t.first == NEXTLINE)
+	{
+		res += " \\n";
+	}
+	else
+	{
+		res += string("  ") + t.second;
+	}
 	return res;
 }
 
@@ -45,7 +53,7 @@ void LexicalAnalyser::openFile(const char* path)
 char LexicalAnalyser::getNextChar()
 {
 	char c;
-	while (src >> c) 
+	while (src.get(c)) 
 	{
 		if (c == ' '||c=='\t') 
 		{
@@ -359,7 +367,7 @@ Token LexicalAnalyser::getNextToken()
 				}
 				int a = buf;
 				string buf1 = to_string(a);
-				return Token(CHAR, buf1);
+				return Token(CHAR_VAL, buf1);
 			}
 			else
 			{
