@@ -68,9 +68,9 @@ NumFloat::NumFloat(const Symbol& sym, const string& number) : Symbol(sym)
 	this->number = number;
 }
 
-Char::Char(const Symbol& sym, const string& character) : Symbol(sym)
+Char::Char(const Symbol& sym, const string& ascii) : Symbol(sym)
 {
-	this->character = character;
+	this->ascii = ascii;
 }
 
 FunctionDeclare::FunctionDeclare(const Symbol& sym) : Symbol(sym) {}
@@ -435,7 +435,7 @@ void ParserAndSemanticAnalyser::createDFA()
 					}
 					else
 					{
-						SLR1_Table[GOTO(nowI, *followIter)] = Behavior{ reduct,itIter->pro };
+						SLR1_Table[GOTO(nowI, *followIter)] = Behavior{ reduce,itIter->pro };
 					}
 
 				}
@@ -621,29 +621,40 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 		{
 			nextSymbol = new NumInt(Symbol{ true,"NUM_INT" }, word);
 		}
-		else if (LT == NUM_FlOAT)
+		else if (LT == NUM_FLOAT)
 		{
-			nextSymbol = new NumInt(Symbol{ true,"NUM_INT" }, word);
+			nextSymbol = new NumFloat(Symbol{ true,"NUM_FLOAT" }, word);
+		}
+		else if (LT == CHAR)
+		{
+			nextSymbol = new Char(Symbol{ true,"CHAR" }, word);
 		}
 		else 
 		{
 			nextSymbol = new Symbol(true, word);
 		}
+
 		if (SLR1_Table.count(GOTO(staStack.top(), *nextSymbol)) == 0) 
 		{
 			outputError(string("语法错误：第")+to_string(lineCount)+"行，不期待的符号"+nextSymbol->content);
 		}
 
 		Behavior bh = SLR1_Table[GOTO(staStack.top(), *nextSymbol)];
-		if (bh.behavior == shift) {
+
+		// 移进
+		if (bh.behavior == shift) 
+		{
 			symStack.push(nextSymbol);
 			staStack.push(bh.nextStat);
 			iter++;
 		}
-		else if (bh.behavior == reduct) {
+		// 规约
+		else if (bh.behavior == reduce)
+		{
 			Production reductPro = productions[bh.nextStat];
 			int popSymNum = reductPro.right.size();
-			switch (bh.nextStat) {
+			switch (bh.nextStat) 
+			{
 				case 3://declare ::= int ID M A function_declare
 				{
 					FunctionDeclare *function_declare = (FunctionDeclare*)popSymbol();
@@ -664,7 +675,47 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(new Symbol(reductPro.left));
 					break;
 				}
-				case 5://declare ::= void ID M A function_declare
+				case 5://declare ::= float ID M A function_declare
+				{
+					FunctionDeclare* function_declare = (FunctionDeclare*)popSymbol();
+					Symbol* A = popSymbol();
+					M* m = (M*)popSymbol();
+					Id* ID = (Id*)popSymbol();
+					Symbol* _float = popSymbol();
+					funcTable.push_back(Func{ ID->name,D_FLOAT,function_declare->plist,m->quad });
+					pushSymbol(new Symbol(reductPro.left));
+					break;
+				}
+				case 6://declare ::= float ID var_declare
+				{
+					Symbol* var_declare = popSymbol();
+					Id* ID = (Id*)popSymbol();
+					Symbol* _float = popSymbol();
+					varTable.push_back(Var{ ID->name,D_FLOAT,nowLevel });
+					pushSymbol(new Symbol(reductPro.left));
+					break;
+				}
+				case 7://declare ::= char ID M A function_declare
+				{
+					FunctionDeclare* function_declare = (FunctionDeclare*)popSymbol();
+					Symbol* A = popSymbol();
+					M* m = (M*)popSymbol();
+					Id* ID = (Id*)popSymbol();
+					Symbol* _char = popSymbol();
+					funcTable.push_back(Func{ ID->name,D_CHAR,function_declare->plist,m->quad });
+					pushSymbol(new Symbol(reductPro.left));
+					break;
+				}
+				case 8://declare ::= char ID var_declare
+				{
+					Symbol* var_declare = popSymbol();
+					Id* ID = (Id*)popSymbol();
+					Symbol* _char = popSymbol();
+					varTable.push_back(Var{ ID->name,D_CHAR,nowLevel });
+					pushSymbol(new Symbol(reductPro.left));
+					break;
+				}
+				case 9://declare ::= void ID M A function_declare
 				{
 					FunctionDeclare* function_declare = (FunctionDeclare*)popSymbol();
 					Symbol* A = popSymbol();
@@ -675,13 +726,13 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(new Symbol(reductPro.left));
 					break;
 				}
-				case 6://A ::=
+				case 10://A ::=
 				{
 					nowLevel++;
 					pushSymbol(new Symbol(reductPro.left));
 					break;
 				}
-				case 8://function_declare ::= ( parameter ) sentence_block
+				case 12://function_declare ::= ( parameter ) sentence_block
 				{
 					SentenceBlock* sentence_block = (SentenceBlock*)popSymbol();
 					Symbol* rparen = popSymbol();
@@ -692,7 +743,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(function_declare);
 					break;
 				}
-				case 9://parameter :: = parameter_list
+				case 13://parameter :: = parameter_list
 				{
 					ParameterList* parameter_list = (ParameterList*)popSymbol();
 					Parameter *parameter = new Parameter(reductPro.left);
@@ -700,14 +751,14 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(parameter);
 					break;
 				}
-				case 10://parameter ::= void
+				case 14://parameter ::= void
 				{
 					Symbol* _void = popSymbol();
 					Parameter* parameter = new Parameter(reductPro.left);
 					pushSymbol(parameter);
 					break;
 				}
-				case 11://parameter_list ::= param
+				case 15://parameter_list ::= param
 				{
 					Symbol* param = popSymbol();
 					ParameterList* parameter_list = new ParameterList(reductPro.left);
@@ -715,7 +766,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(parameter_list);
 					break;
 				}
-				case 12://parameter_list1 ::= param , parameter_list2
+				case 16://parameter_list1 ::= param , parameter_list
 				{
 					ParameterList* parameter_list2 = (ParameterList*)popSymbol();
 					Symbol* comma = popSymbol();
@@ -726,7 +777,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(parameter_list1);
 					break;
 				}
-				case 13://param ::= int ID
+				case 17://param ::= int ID
 				{
 					Id* ID = (Id*)popSymbol();
 					Symbol* _int = popSymbol();
@@ -735,7 +786,25 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(new Symbol(reductPro.left));
 					break;
 				}
-				case 14://sentence_block ::= { inner_declare sentence_list }
+				case 18://param ::= char ID
+				{
+					Id* ID = (Id*)popSymbol();
+					Symbol* _char = popSymbol();
+					varTable.push_back(Var{ ID->name,D_CHAR,nowLevel });
+					code.emit("get", "_", "_", ID->name);
+					pushSymbol(new Symbol(reductPro.left));
+					break;
+				}
+				case 19://param ::= float ID
+				{
+					Id* ID = (Id*)popSymbol();
+					Symbol* _float = popSymbol();
+					varTable.push_back(Var{ ID->name,D_FLOAT,nowLevel });
+					code.emit("get", "_", "_", ID->name);
+					pushSymbol(new Symbol(reductPro.left));
+					break;
+				}
+				case 20://sentence_block ::= { inner_declare sentence_list }
 				{
 					Symbol* rbrace = popSymbol();
 					SentenceList* sentence_list = (SentenceList*)popSymbol();
@@ -757,7 +826,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(sentence_block);
 					break;
 				}
-				case 17://inner_var_declare ::= int ID
+				case 23://inner_var_declare ::= int ID
 				{
 					Id* ID = (Id*)popSymbol();
 					Symbol* _int = popSymbol();
@@ -765,7 +834,23 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					varTable.push_back(Var{ ID->name,D_INT,nowLevel });
 					break;
 				}
-				case 18://sentence_list ::= sentence M sentence_list
+				case 24://inner_var_declare ::= float ID
+				{
+					Id* ID = (Id*)popSymbol();
+					Symbol* _float = popSymbol();
+					pushSymbol(new Symbol(reductPro.left));
+					varTable.push_back(Var{ ID->name,D_FLOAT,nowLevel });
+					break;
+				}
+				case 25://inner_var_declare ::= char ID
+				{
+					Id* ID = (Id*)popSymbol();
+					Symbol* _char = popSymbol();
+					pushSymbol(new Symbol(reductPro.left));
+					varTable.push_back(Var{ ID->name,D_CHAR,nowLevel });
+					break;
+				}
+				case 26://sentence_list ::= sentence M sentence_list
 				{
 					SentenceList* sentence_list2 = (SentenceList*)popSymbol();
 					M* m = (M*)popSymbol();
@@ -776,7 +861,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(sentence_list1);
 					break;
 				}
-				case 19://sentence_list ::= sentence
+				case 27://sentence_list ::= sentence
 				{
 					Sentence* sentence = (Sentence*)popSymbol();
 					SentenceList* sentence_list = new SentenceList(reductPro.left);
@@ -784,7 +869,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(sentence_list);
 					break;
 				}
-				case 20://sentence ::= if_sentence
+				case 28://sentence ::= if_sentence
 				{
 					IfSentence* if_sentence = (IfSentence*)popSymbol();
 					Sentence* sentence = new Sentence(reductPro.left);
@@ -792,7 +877,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(sentence);
 					break;
 				}
-				case 21://sentence ::= while_sentence
+				case 29://sentence ::= while_sentence
 				{
 					WhileSentence* while_sentence = (WhileSentence*)popSymbol();
 					Sentence* sentence = new Sentence(reductPro.left);
@@ -800,21 +885,21 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(sentence);
 					break;
 				}
-				case 22://sentence ::= return_sentence
+				case 30://sentence ::= return_sentence
 				{
 					Symbol* return_sentence = popSymbol();
 					Sentence* sentence = new Sentence(reductPro.left);
 					pushSymbol(sentence);
 					break;
 				}
-				case 23://sentence ::= assign_sentence
+				case 31://sentence ::= assign_sentence
 				{
 					Symbol* assign_sentence = popSymbol();
 					Sentence* sentence = new Sentence(reductPro.left);
 					pushSymbol(sentence);
 					break;
 				}
-				case 24://assign_sentence ::= ID = expression ;
+				case 32://assign_sentence ::= ID = expression ;
 				{
 					Symbol* comma = popSymbol();
 					Expression* expression = (Expression*)popSymbol();
@@ -825,7 +910,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(assign_sentence);
 					break;
 				}
-				case 25://return_sentence ::= return ;
+				case 33://return_sentence ::= return ;
 				{
 					Symbol* comma = popSymbol();
 					Symbol* _return = popSymbol();
@@ -833,7 +918,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(new Symbol(reductPro.left));
 					break;
 				}
-				case 26://return_sentence ::= return expression ;
+				case 34://return_sentence ::= return expression ;
 				{
 					Symbol* comma = popSymbol();
 					Expression* expression = (Expression*)popSymbol();
@@ -842,7 +927,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(new Symbol(reductPro.left));
 					break;
 				}
-				case 27://while_sentence ::= while M ( expression ) A sentence_block
+				case 35://while_sentence ::= while M ( expression ) A sentence_block
 				{
 					SentenceBlock* sentence_block = (SentenceBlock*)popSymbol();
 					Symbol* A = popSymbol();
@@ -858,7 +943,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(while_sentence);
 					break;
 				}
-				case 28://if_sentence ::= if ( expression ) A sentence_block
+				case 36://if_sentence ::= if ( expression ) A sentence_block
 				{
 					SentenceBlock* sentence_block = (SentenceBlock*)popSymbol();
 					Symbol* A = popSymbol();
@@ -872,7 +957,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(if_sentence);
 					break;
 				}
-				case 29://if_sentence ::= if ( expression ) A1 sentence_block1 N else M A2 sentence_block2
+				case 37://if_sentence ::= if ( expression ) A1 sentence_block1 N else M A2 sentence_block2
 				{
 					SentenceBlock* sentence_block2 = (SentenceBlock*)popSymbol();
 					Symbol* A2 = popSymbol();
@@ -892,7 +977,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(if_sentence);
 					break;
 				}
-				case 30://N ::= 
+				case 38://N ::= 
 				{
 					N* n = new N(reductPro.left);
 					n->nextList.push_back(code.nextQuad());
@@ -900,14 +985,14 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(n);
 					break;
 				}
-				case 31://M ::=
+				case 39://M ::=
 				{
 					M* m = new M(reductPro.left);
 					m->quad = code.nextQuad();
 					pushSymbol(m);
 					break;
 				}
-				case 32://expression ::= add_expression
+				case 40://expression ::= add_expression
 				{
 					AddExpression* add_expression = (AddExpression*)popSymbol();
 					Expression* expression = new Expression(reductPro.left);
@@ -915,7 +1000,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(expression);
 					break;
 				}
-				case 33://expression ::= add_expression1 > add_expression2
+				case 41://expression ::= add_expression1 > add_expression2
 				{
 					AddExpression* add_expression2 = (AddExpression*)popSymbol();
 					Symbol* gt = popSymbol();
@@ -926,7 +1011,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(expression);
 					break;
 				}
-				case 34://expression ::= add_expression1 < add_expression2
+				case 42://expression ::= add_expression1 < add_expression2
 				{
 					AddExpression* add_expression2 = (AddExpression*)popSymbol();
 					Symbol* lt = popSymbol();
@@ -937,7 +1022,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(expression);
 					break;
 				}
-				case 35://expression ::= add_expression1 == add_expression2
+				case 43://expression ::= add_expression1 == add_expression2
 				{
 					AddExpression* add_expression2 = (AddExpression*)popSymbol();
 					Symbol *eq = popSymbol();
@@ -948,7 +1033,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(expression);
 					break;
 				}
-				case 36://expression ::= add_expression1 >= add_expression2
+				case 44://expression ::= add_expression1 >= add_expression2
 				{
 					AddExpression* add_expression2 = (AddExpression*)popSymbol();
 					Symbol* get = popSymbol();
@@ -959,7 +1044,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(expression);
 					break;
 				}
-				case 37://expression ::= add_expression1 <= add_expression2
+				case 45://expression ::= add_expression1 <= add_expression2
 				{
 					AddExpression* add_expression2 = (AddExpression*)popSymbol();
 					Symbol* let = popSymbol();
@@ -970,7 +1055,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(expression);
 					break;
 				}
-				case 38://expression ::= add_expression1 != add_expression2
+				case 46://expression ::= add_expression1 != add_expression2
 				{
 					AddExpression* add_expression2 = (AddExpression*)popSymbol();
 					Symbol* neq = popSymbol();
@@ -981,7 +1066,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(expression);
 					break;
 				}
-				case 39://add_expression ::= item
+				case 47://add_expression ::= item
 				{
 					Nomial* item = (Nomial*)popSymbol();
 					AddExpression* add_expression = new AddExpression(reductPro.left);
@@ -989,7 +1074,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(add_expression);
 					break;
 				}
-				case 40://add_expression1 ::= item + add_expression2
+				case 48://add_expression1 ::= item + add_expression2
 				{
 					AddExpression* add_expression2 = (AddExpression*)popSymbol();
 					Symbol* add = popSymbol();
@@ -1000,7 +1085,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(add_expression1);
 					break;
 				}
-				case 41://add_expression ::= item - add_expression
+				case 49://add_expression ::= item - add_expression
 				{
 					AddExpression* add_expression2 = (AddExpression*)popSymbol();
 					Symbol* sub = popSymbol();
@@ -1011,7 +1096,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(add_expression1);
 					break;
 				}
-				case 42://item ::= factor
+				case 50://item ::= factor
 				{
 					Factor* factor = (Factor*)popSymbol();
 					Nomial* item = new Nomial(reductPro.left);
@@ -1019,7 +1104,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(item);
 					break;
 				}
-				case 43://item1 ::= factor * item2
+				case 51://item1 ::= factor * item2
 				{
 					Nomial* item2 = (Nomial*)popSymbol();
 					Symbol* mul = popSymbol();
@@ -1030,7 +1115,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(item1);
 					break;
 				}
-				case 44://item1 ::= factor / item2
+				case 52://item1 ::= factor / item2
 				{
 					Nomial* item2 = (Nomial*)popSymbol();
 					Symbol* div = popSymbol();
@@ -1041,15 +1126,31 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(item1);
 					break;
 				}
-				case 45://factor ::= NUM
+				case 53://factor ::= NUM_INT
 				{
-					Num* num = (Num*)popSymbol();
+					NumInt* num_int = (NumInt*)popSymbol();
 					Factor* factor = new Factor(reductPro.left);
-					factor->name = num->number;
+					factor->name = num_int->number;
 					pushSymbol(factor);
 					break;
 				}
-				case 46://factor ::= ( expression )
+				case 54://factor ::= NUM_FLOAT
+				{
+					NumInt* num_float = (NumInt*)popSymbol();
+					Factor* factor = new Factor(reductPro.left);
+					factor->name = num_float->number;
+					pushSymbol(factor);
+					break;
+				}
+				case 55://factor ::= NUM_CHAR
+				{
+					Char* _char = (Char*)popSymbol();
+					Factor* factor = new Factor(reductPro.left);
+					factor->name = _char->ascii;
+					pushSymbol(factor);
+					break;
+				}
+				case 56://factor ::= ( expression )
 				{
 					Symbol* rparen = popSymbol();
 					Expression* expression = (Expression*)popSymbol();
@@ -1059,7 +1160,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(factor);
 					break;
 				}
-				case 47://factor ::= ID ( argument_list )
+				case 57://factor ::= ID ( argument_list )
 				{
 					Symbol* rparen = popSymbol();
 					ArgumentList* argument_list = (ArgumentList*)popSymbol();
@@ -1085,7 +1186,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					}
 					break;
 				}
-				case 48://factor ::= ID
+				case 58://factor ::= ID
 				{
 					Id* ID = (Id*)popSymbol();
 					if (lookUpVar(ID->name) == NULL) {
@@ -1096,13 +1197,13 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(factor);
 					break;
 				}
-				case 49://argument_list ::= 
+				case 59://argument_list ::= 
 				{
 					ArgumentList* argument_list = new ArgumentList(reductPro.left);
 					pushSymbol(argument_list);
 					break;
 				}
-				case 50://argument_list ::= expression
+				case 60://argument_list ::= expression
 				{
 					Expression* expression = (Expression*)popSymbol();
 					ArgumentList* argument_list = new ArgumentList(reductPro.left);
@@ -1110,7 +1211,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(argument_list);
 					break;
 				}
-				case 51://argument_list1 ::= expression , argument_list2
+				case 61://argument_list1 ::= expression , argument_list2
 				{
 					ArgumentList* argument_list2 = (ArgumentList*)popSymbol();
 					Symbol* comma = popSymbol();

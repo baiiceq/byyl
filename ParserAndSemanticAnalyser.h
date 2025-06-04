@@ -24,7 +24,7 @@ enum DecType
 };
 
 //数据类型（int/void）
-enum DType { D_VOID, D_INT, D_CHAR，D_FLOAT };
+enum DType { D_VOID, D_INT, D_CHAR, D_FLOAT };
 
 
 struct Var 
@@ -66,8 +66,8 @@ public:
 class Char :public Symbol
 {
 public:
-	string character;
-	Char(const Symbol& sym, const string& character);
+	string ascii;
+	Char(const Symbol& sym, const string& acsii);
 };
 
 class FunctionDeclare :public Symbol 
@@ -217,7 +217,7 @@ struct DFA
 	map<GOTO, int> goTo;
 };
 
-enum Behave { reduct, shift, accept, error};
+enum Behave { reduce, shift, accept, error};
 struct Behavior 
 {
 	Behave behavior;
