@@ -301,6 +301,10 @@ Token LexicalAnalyser::getNextToken()
 				{
 					return Token(FLOAT, "float");
 				}
+				else if (buf == "char")
+				{
+					return Token(CHAR, "char");
+				}
 				else if (buf == "while") 
 				{
 					return Token(WHILE, "while");
