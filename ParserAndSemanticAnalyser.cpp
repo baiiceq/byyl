@@ -8,34 +8,42 @@ list<int>merge(list<int>&l1, list<int>&l2)
 	return ret;
 }
 
-bool operator ==(const Symbol&one, const Symbol&other) {
+bool operator ==(const Symbol&one, const Symbol&other) 
+{
 	return one.content == other.content;
 }
-bool operator <(const Symbol&one, const Symbol&other) {
+bool operator <(const Symbol&one, const Symbol&other) 
+{
 	return one.content < other.content;
 }
-bool operator < (const Item&one, const Item& other) {
+bool operator < (const Item&one, const Item& other) 
+{
 	return pair<int, int>(one.pro, one.pointPos) < pair<int, int>(other.pro, other.pointPos);
 }
-bool operator ==(const Item&one, const Item& other) {
+bool operator ==(const Item&one, const Item& other)
+{
 	return one.pro == other.pro&&one.pointPos == other.pointPos;
 }
 
-Symbol::Symbol(const Symbol& sym) {
+Symbol::Symbol(const Symbol& sym) 
+{
 	this->content = sym.content;
 	this->isVt = sym.isVt;
 }
 
-Symbol::Symbol(const bool &isVt, const string& content) {
+Symbol::Symbol(const bool &isVt, const string& content)
+{
 	this->isVt = isVt;
 	this->content = content;
 }
 
-NewTemper::NewTemper() {
+NewTemper::NewTemper() 
+{
 	now = 0;
 }
 
-string NewTemper::newTemp() {
+string NewTemper::newTemp() 
+{
 	return string("T") + to_string(now++);
 }
 
@@ -50,9 +58,19 @@ Id::Id(const Symbol& sym, const string& name) : Symbol(sym)
 	this->name = name;
 }
 
-Num::Num(const Symbol& sym, const string& number) : Symbol(sym) 
+NumInt::NumInt(const Symbol& sym, const string& number) : Symbol(sym) 
 {
 	this->number = number;
+}
+
+NumFloat::NumFloat(const Symbol& sym, const string& number) : Symbol(sym)
+{
+	this->number = number;
+}
+
+Char::Char(const Symbol& sym, const string& character) : Symbol(sym)
+{
+	this->character = character;
 }
 
 FunctionDeclare::FunctionDeclare(const Symbol& sym) : Symbol(sym) {}
@@ -95,7 +113,7 @@ bool isVT(string s)
 	{
 		return true;
 	}
-	if (s == ";" || s == "," || s == "(" || s == ")" || s == "{" || s == "}" || s == "ID" || s == "NUM") 
+	if (s == ";" || s == "," || s == "(" || s == ")" || s == "{" || s == "}" || s == "ID" || s == "NUM_INT" || s == "NUM_FLOAT")
 	{
 		return true;
 	}
@@ -118,51 +136,65 @@ void ParserAndSemanticAnalyser::getFirst()
 	{
 		changeFlag = false;//first集改变标志
 		//遍历每一个产生式
-		for (vector<Production>::iterator iter = productions.begin(); iter != productions.end(); iter++) {
+		for (vector<Production>::iterator iter = productions.begin(); iter != productions.end(); iter++)
+		{
 			vector<Symbol>::iterator symIter;
 			//依次遍历产生式右部的所有符号
-			for (symIter = iter->right.begin(); symIter != iter->right.end(); symIter++) {
+			for (symIter = iter->right.begin(); symIter != iter->right.end(); symIter++)
+			{
 				//这个右部符号是终结符
-				if (symIter->isVt) {
-					if (first.count(iter->left) == 0) {
+				if (symIter->isVt) 
+				{
+					if (first.count(iter->left) == 0) 
+					{
 						first[iter->left] = set<Symbol>();
 					}
 					//左部符号的first集不包含该右部符号
-					if (first[iter->left].insert(*symIter).second == true) {
+					if (first[iter->left].insert(*symIter).second == true) 
+					{
 						changeFlag = true;
 					}
 					break;
 				}
 				//当前右部符号是非终结符
-				else {
+				else 
+				{
 					bool continueFlag = false;//是否继续读取下一个右部符号的first集
 					set<Symbol>::iterator firstIter;
 					//遍历该右部符号的first集
-					for (firstIter = first[*symIter].begin(); firstIter != first[*symIter].end(); firstIter++) {
+					for (firstIter = first[*symIter].begin(); firstIter != first[*symIter].end(); firstIter++)
+					{
 						//右部符号的first集中的元素包含EMPTY
-						if (firstIter->content == "EMPTY") {
+						if (firstIter->content == "EMPTY")
+						{
 							continueFlag = true;
 						}
 						//右部符号的first集中的元素不在左部符号first集中
-						else if (first[iter->left].find(*firstIter) == first[iter->left].end()) {
-							if (first.count(iter->left) == 0) {
+						else if (first[iter->left].find(*firstIter) == first[iter->left].end())
+						{
+							if (first.count(iter->left) == 0)
+							{
 								first[iter->left] = set<Symbol>();
 							}
 							first[iter->left].insert(*firstIter);
 							changeFlag = true;
 						}
 					}
-					if (!continueFlag) {
+					if (!continueFlag) 
+					{
 						break;
 					}
 				}
 			}
 			//遍历右部符号到了末尾,则EMPTY在其first集中
-			if (symIter == iter->right.end()) {
-				if (first.count(iter->left) == 0) {
+			if (symIter == iter->right.end()) 
+			{
+				if (first.count(iter->left) == 0)
+				{
 					first[iter->left] = set<Symbol>();
 				}
-				if (first[iter->left].insert(Symbol{ true,"EMPTY" }).second == true) {
+				if (first[iter->left].insert(Symbol{ true,"EMPTY" }).second == true)
+				{
 					changeFlag = true;
 				}
 			}
@@ -177,60 +209,77 @@ void ParserAndSemanticAnalyser::getFollow()
 	follow[productions[0].left] = set<Symbol>();
 	follow[productions[0].left].insert(Symbol{ true,"#" });
 	bool changeFlag = true;
-	while (changeFlag) {
+	while (changeFlag) 
+	{
 		changeFlag = false;
 		//遍历每一个产生式
-		for (vector<Production>::iterator proIter = productions.begin(); proIter != productions.end(); proIter++) {
+		for (vector<Production>::iterator proIter = productions.begin(); proIter != productions.end(); proIter++) 
+		{
 			//遍历产生式右部的每个符号
-			for (vector<Symbol>::iterator symIter = proIter->right.begin(); symIter != proIter->right.end(); symIter++) {
+			for (vector<Symbol>::iterator symIter = proIter->right.begin(); symIter != proIter->right.end(); symIter++) 
+			{
 				//遍历产生式右部该符号之后的符号
 				vector<Symbol>::iterator nextSymIter;
-				for (nextSymIter = symIter + 1; nextSymIter != proIter->right.end(); nextSymIter++) {
+				for (nextSymIter = symIter + 1; nextSymIter != proIter->right.end(); nextSymIter++) 
+				{
 					Symbol nextSym = *nextSymIter;
 					bool nextFlag = false;
 					//如果之后的符号是终结符
-					if (nextSym.isVt) {
-						if (follow.count(*symIter) == 0) {
+					if (nextSym.isVt)
+					{
+						if (follow.count(*symIter) == 0) 
+						{
 							follow[*symIter] = set<Symbol>();
 						}
 						//如果成功插入新值
-						if (follow[*symIter].insert(nextSym).second == true) {
+						if (follow[*symIter].insert(nextSym).second == true)
+						{
 							changeFlag = true;
 						}
 					}
-					else {
+					else 
+					{
 						//遍历之后符号的first集
 						for (set<Symbol>::iterator fIter = first[nextSym].begin(); fIter != first[nextSym].end(); fIter++) {
 							//如果当前符号first集中有 空串
-							if (fIter->content == "EMPTY") {
+							if (fIter->content == "EMPTY") 
+							{
 								nextFlag = true;
 							}
-							else {
-								if (follow.count(*symIter) == 0) {
+							else 
+							{
+								if (follow.count(*symIter) == 0) 
+								{
 									follow[*symIter] = set<Symbol>();
 								}
 								//如果成功插入新值
-								if (follow[*symIter].insert(*fIter).second == true) {
+								if (follow[*symIter].insert(*fIter).second == true) 
+								{
 									changeFlag = true;
 								}
 							}
 						}
 					}
 					//如果当前符号first集中没有 空串
-					if (!nextFlag) {
+					if (!nextFlag) 
+					{
 						break;
 					}
 
 				}
 				//如果遍历到了结尾,将左部符号的FOLLOW集加入其FOLLOW集中
-				if (nextSymIter == proIter->right.end()) {
+				if (nextSymIter == proIter->right.end()) 
+				{
 					//遍历左部符号的FOLLOW集
-					for (set<Symbol>::iterator followIter = follow[proIter->left].begin(); followIter != follow[proIter->left].end(); followIter++) {
-						if (follow.count(*symIter) == 0) {
+					for (set<Symbol>::iterator followIter = follow[proIter->left].begin(); followIter != follow[proIter->left].end(); followIter++)
+					{
+						if (follow.count(*symIter) == 0)
+						{
 							follow[*symIter] = set<Symbol>();
 						}
 						//如果该FOLLOW集是新值
-						if (follow[*symIter].insert(*followIter).second == true) {
+						if (follow[*symIter].insert(*followIter).second == true)
+						{
 							changeFlag = true;
 						}
 					}
@@ -320,23 +369,29 @@ void ParserAndSemanticAnalyser::readProductions(const char*fileName)
 	}
 }
 
-I ParserAndSemanticAnalyser::derive(Item item) {
+I ParserAndSemanticAnalyser::derive(Item item) 
+{
 	I i;
 	// .在项目产生式的最右边，即是一个规约项目
-	if (productions[item.pro].right.size() == item.pointPos) {
+	if (productions[item.pro].right.size() == item.pointPos)
+	{
 		i.items.insert(item);
 	}
 	// .的右边是终结符
-	else if (productions[item.pro].right[item.pointPos].isVt) {
+	else if (productions[item.pro].right[item.pointPos].isVt) 
+	{
 		i.items.insert(item);
 	}
 	// .的右边是非终结符
-	else {
+	else
+	{
 		i.items.insert(item);
 		vector<Production>::iterator iter;
-		for (iter = productions.begin(); iter < productions.end(); iter++) {
+		for (iter = productions.begin(); iter < productions.end(); iter++) 
+		{
 			//产生式的左部 == .右边的非终结符
-			if (iter->left == productions[item.pro].right[item.pointPos]) {
+			if (iter->left == productions[item.pro].right[item.pointPos]) 
+			{
 				//将产生式的派生加入I中
 				I temp = derive(Item{ (int)(iter - productions.begin()),0 });
 
@@ -351,27 +406,35 @@ I ParserAndSemanticAnalyser::derive(Item item) {
 	return i;
 }
 
-void ParserAndSemanticAnalyser::createDFA() {
+void ParserAndSemanticAnalyser::createDFA() 
+{
 	bool newFlag = true;//有新的状态产生标志
 	int nowI = 0;//当前状态的编号
 	dfa.stas.push_back(derive(Item{ 0,0 }));
 	//遍历每一个状态
-	for (list<I>::iterator iter = dfa.stas.begin(); iter != dfa.stas.end(); iter++, nowI++) {
+	for (list<I>::iterator iter = dfa.stas.begin(); iter != dfa.stas.end(); iter++, nowI++) 
+	{
 		//遍历状态的每一个项目
-		for (set<Item>::iterator itIter = iter->items.begin(); itIter != iter->items.end(); itIter++) {
+		for (set<Item>::iterator itIter = iter->items.begin(); itIter != iter->items.end(); itIter++)
+		{
 			// .在项目产生式的最右边，即是一个规约项目
-			if (productions[itIter->pro].right.size() == itIter->pointPos) {
+			if (productions[itIter->pro].right.size() == itIter->pointPos)
+			{
 				set<Symbol>FOLLOW = follow[productions[itIter->pro].left];
-				for (set<Symbol>::iterator followIter = FOLLOW.begin(); followIter != FOLLOW.end(); followIter++) {
-					if (SLR1_Table.count(GOTO(nowI, *followIter)) == 1) {
+				for (set<Symbol>::iterator followIter = FOLLOW.begin(); followIter != FOLLOW.end(); followIter++) 
+				{
+					if (SLR1_Table.count(GOTO(nowI, *followIter)) == 1) 
+					{
 						string err = "文法不是SLR1文法，移进规约冲突";
 						//err += string("GOTO(") + to_string(nowI) + "," + followIter->content + ")=" + to_string(SLR1_Table[GOTO(nowI, *followIter)].nextStat);
 						outputError(err);
 					}
-					if (itIter->pro == 0) {
+					if (itIter->pro == 0) // OK
+					{
 						SLR1_Table[GOTO(nowI, *followIter)] = Behavior{ accept,itIter->pro };
 					}
-					else {
+					else
+					{
 						SLR1_Table[GOTO(nowI, *followIter)] = Behavior{ reduct,itIter->pro };
 					}
 
@@ -381,7 +444,8 @@ void ParserAndSemanticAnalyser::createDFA() {
 			Symbol nextSymbol = productions[itIter->pro].right[itIter->pointPos];//.之后的符号
 
 			//DFA中GOTO(nowI,nextSymbol)已经存在
-			if (dfa.goTo.count(GOTO(nowI, nextSymbol)) == 1) {
+			if (dfa.goTo.count(GOTO(nowI, nextSymbol)) == 1) 
+			{
 				continue;
 			}
 
@@ -391,13 +455,16 @@ void ParserAndSemanticAnalyser::createDFA() {
 			//shiftIter指向当前状态项目的下一个项目
 			set<Item>::iterator shiftIter = itIter;
 			shiftIter++;
-			for (; shiftIter != iter->items.end(); shiftIter++) {
+			for (; shiftIter != iter->items.end(); shiftIter++)
+			{
 				//如果是规约项目
-				if (productions[shiftIter->pro].right.size() == shiftIter->pointPos) {
+				if (productions[shiftIter->pro].right.size() == shiftIter->pointPos)
+				{
 					continue;
 				}
 				//如果是移进项目，且移进nextSymbol
-				else if (productions[shiftIter->pro].right[shiftIter->pointPos] == nextSymbol) {
+				else if (productions[shiftIter->pro].right[shiftIter->pointPos] == nextSymbol)
+				{
 					I tempI = derive(Item{ shiftIter->pro,shiftIter->pointPos + 1 });
 					newI.items.insert(tempI.items.begin(), tempI.items.end());
 				}
@@ -405,10 +472,13 @@ void ParserAndSemanticAnalyser::createDFA() {
 			//查找已有状态中是否已经包含该状态
 			bool searchFlag = false;
 			int index = 0;//当前状态的编号
-			for (list<I>::iterator iterHave = dfa.stas.begin(); iterHave != dfa.stas.end(); iterHave++, index++) {
-				if (iterHave->items == newI.items) {
+			for (list<I>::iterator iterHave = dfa.stas.begin(); iterHave != dfa.stas.end(); iterHave++, index++) 
+			{
+				if (iterHave->items == newI.items)
+				{
 					dfa.goTo[GOTO(nowI, nextSymbol)] = index;
-					if (SLR1_Table.count(GOTO(nowI, nextSymbol)) == 1) {
+					if (SLR1_Table.count(GOTO(nowI, nextSymbol)) == 1)
+					{
 						outputError("confict");
 					}
 					SLR1_Table[GOTO(nowI, nextSymbol)] = Behavior{ shift,index };
@@ -418,15 +488,18 @@ void ParserAndSemanticAnalyser::createDFA() {
 			}
 
 			//没有在已有状态中找到该状态
-			if (!searchFlag) {
+			if (!searchFlag)
+			{
 				dfa.stas.push_back(newI);
 				dfa.goTo[GOTO(nowI, nextSymbol)] = dfa.stas.size() - 1;
-				if (SLR1_Table.count(GOTO(nowI, nextSymbol)) == 1) {
+				if (SLR1_Table.count(GOTO(nowI, nextSymbol)) == 1)
+				{
 					outputError("confict");
 				}
 				SLR1_Table[GOTO(nowI, nextSymbol)] = Behavior{ shift,int(dfa.stas.size() - 1) };
 			}
-			else {
+			else 
+			{
 				continue;
 			}
 
@@ -434,7 +507,8 @@ void ParserAndSemanticAnalyser::createDFA() {
 	}
 }
 
-Func* ParserAndSemanticAnalyser::lookUpFunc(string ID) {
+Func* ParserAndSemanticAnalyser::lookUpFunc(string ID)
+{
 	for (vector<Func>::iterator iter = funcTable.begin(); iter != funcTable.end(); iter++) {
 		if (iter->name == ID) {
 			return &(*iter);
@@ -443,7 +517,8 @@ Func* ParserAndSemanticAnalyser::lookUpFunc(string ID) {
 	return NULL;
 }
 
-Var* ParserAndSemanticAnalyser::lookUpVar(string ID) {
+Var* ParserAndSemanticAnalyser::lookUpVar(string ID) 
+{
 	for (vector<Var>::reverse_iterator iter = varTable.rbegin(); iter != varTable.rend(); iter++) {
 		if (iter->name == ID) {
 			return &(*iter);
@@ -514,36 +589,48 @@ void ParserAndSemanticAnalyser::pushSymbol(Symbol* sym) {
 	staStack.push(bh.nextStat);
 }
 
-void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out) {
+void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out) 
+{
 	bool acc = false;
 	symStack.push(new Symbol(true, "#"));
 	staStack.push(0);
-	for (list<Token>::iterator iter = words.begin(); iter != words.end(); ) {
+	for (list<Token>::iterator iter = words.begin(); iter != words.end(); ) 
+	{
 		outputSymbolStack(out);
 		outputStateStack(out);
 		LexicalType LT = iter->first;
 		string word = iter->second;
 
 		//忽略行注释和段注释
-		if (LT == LCOMMENT || LT == PCOMMENT) {
+		if (LT == LCOMMENT || LT == PCOMMENT) 
+		{
 			continue;
 		}
-		if (LT == NEXTLINE) {
+		if (LT == NEXTLINE) 
+		{
 			lineCount++;
 			continue;
 		}
 
 		Symbol* nextSymbol;
-		if (LT == ID) {
+		if (LT == ID)
+		{
 			nextSymbol = new Id(Symbol{ true,"ID" }, word);
 		}
-		else if (LT == NUM_INT) {
-			nextSymbol = new Num(Symbol{ true,"NUM_INT" }, word);
+		else if (LT == NUM_INT)
+		{
+			nextSymbol = new NumInt(Symbol{ true,"NUM_INT" }, word);
 		}
-		else {
+		else if (LT == NUM_FlOAT)
+		{
+			nextSymbol = new NumInt(Symbol{ true,"NUM_INT" }, word);
+		}
+		else 
+		{
 			nextSymbol = new Symbol(true, word);
 		}
-		if (SLR1_Table.count(GOTO(staStack.top(), *nextSymbol)) == 0) {
+		if (SLR1_Table.count(GOTO(staStack.top(), *nextSymbol)) == 0) 
+		{
 			outputError(string("语法错误：第")+to_string(lineCount)+"行，不期待的符号"+nextSymbol->content);
 		}
 
