@@ -10,7 +10,8 @@ string NewIndex::newIndex()
 	return string("Label") + to_string(index++);
 }
 
-void IntermediateCode::divideBlocks(vector<pair<int, string> > funcEnter) {
+void IntermediateCode::divideBlocks(vector<pair<int, string> > funcEnter) 
+{
 	for (vector<pair<int, string> >::iterator iter = funcEnter.begin(); iter != funcEnter.end(); iter++) {//对每一个函数块
 		vector<Block>blocks;
 		priority_queue<int, vector<int>, greater<int> >block_enter;//记录所有基本块的入口点

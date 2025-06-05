@@ -219,6 +219,7 @@ Token LexicalAnalyser::getNextToken()
 						num += 10 + (c - 'A');
 					}
 				}
+				CI.push_back(to_string(num));
 				return Token(NUM_INT, to_string(num));
 			}
 			else if (c == '0' && (src.peek() == 'o' || src.peek() == 'O'))
@@ -236,6 +237,7 @@ Token LexicalAnalyser::getNextToken()
 					num *= 8;
 					num += a - '0';
 				}
+				CI.push_back(to_string(num));
 				return Token(NUM_INT, to_string(num));
 			}
 			else if (c == '0' && (src.peek() == 'b' || src.peek() == 'B'))
@@ -253,6 +255,7 @@ Token LexicalAnalyser::getNextToken()
 					num *= 2;
 					num += a - '0';
 				}
+				CI.push_back(to_string(num));
 				return Token(NUM_INT, to_string(num));
 			}
 			if (isdigit(c))
@@ -338,10 +341,12 @@ Token LexicalAnalyser::getNextToken()
 					{
 						result.pop_back();
 					}
+					CF.push_back(result);
 					return Token(NUM_FLOAT, result);
 				}
 				if (flag_float)
 				{
+					CF.push_back(buf);
 					return Token(NUM_FLOAT, buf);
 				}
 				return Token(NUM_INT, buf);
@@ -409,6 +414,7 @@ Token LexicalAnalyser::getNextToken()
 				}
 				int a = buf;
 				string buf1 = to_string(a);
+				CT.push_back(buf1);
 				return Token(CHAR_VAL, buf1);
 			}
 			else
@@ -473,4 +479,20 @@ void LexicalAnalyser::outputToFile(const char *fileName)
 list<Token>&LexicalAnalyser::getResult() 
 {
 	return token_list;
+}
+vector<string>LexicalAnalyser::getI()
+{
+	return I;
+}
+vector<string>LexicalAnalyser::getCI()
+{
+	return CI;
+}
+vector<string>LexicalAnalyser::getCF()
+{
+	return CF;
+}
+vector<string>LexicalAnalyser::getCT()
+{
+	return CT;
 }
