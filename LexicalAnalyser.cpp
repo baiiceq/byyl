@@ -339,7 +339,7 @@ Token LexicalAnalyser::getNextToken()
 					result.erase(result.find_last_not_of('0') + 1);
 					if (result.back() == '.') 
 					{
-						result.pop_back();
+						result += '0';
 					}
 					CF.push_back(result);
 					return Token(NUM_FLOAT, result);
