@@ -1,35 +1,43 @@
 #include "ObjectCodeGenerator.h"
 
-bool isVar(string name) {
+bool isVar(string name) 
+{
 	return isalpha(name[0]);
 }
 
-bool isNum(string name) {
+bool isNum(string name) 
+{
 	return isdigit(name[0]);
 }
 
-bool isControlOp(string op) {
-	if (op[0] == 'j' || op == "call" || op == "return" || op == "get") {
+bool isControlOp(string op)
+{
+	if (op[0] == 'j' || op == "call" || op == "return" || op == "get")
+	{
 		return true;
 	}
 	return false;
 }
 
-VarInfomation::VarInfomation(int next, bool active) {
+VarInfomation::VarInfomation(int next, bool active) 
+{
 	this->next = next;
 	this->active = active;
 }
 
-VarInfomation::VarInfomation(const VarInfomation&other) {
+VarInfomation::VarInfomation(const VarInfomation&other) 
+{
 	this->active = other.active;
 	this->next = other.next;
 }
 
-VarInfomation::VarInfomation() {
+VarInfomation::VarInfomation() 
+{
 
 }
 
-void VarInfomation::output(ostream& out) {
+void VarInfomation::output(ostream& out)
+{
 	out << "(";
 	if (next == -1)
 		out << "^";
@@ -51,22 +59,27 @@ QuaternaryWithInfo::QuaternaryWithInfo(Quaternary q, VarInfomation info1, VarInf
 	this->info3 = info3;
 }
 
-void QuaternaryWithInfo::output(ostream& out) {
+void QuaternaryWithInfo::output(ostream& out) 
+{
 	out << "(" << q.op << "," << q.src1 << "," << q.src2 << "," << q.des << ")";
 	info1.output(out);
 	info2.output(out);
 	info3.output(out);
 }
 
-ObjectCodeGenerator::ObjectCodeGenerator() {
+ObjectCodeGenerator::ObjectCodeGenerator()
+{
 
 }
 
-void ObjectCodeGenerator::storeVar(string reg, string var) {
-	if (varOffset.find(var) != varOffset.end()) {//如果已经为*iter分配好了存储空间
+void ObjectCodeGenerator::storeVar(string reg, string var) 
+{
+	if (varOffset.find(var) != varOffset.end()) //如果已经为*iter分配好了存储空间
+	{
 		objectCodes.push_back(string("sw ") + reg + " " + to_string(varOffset[var]) + "($sp)");
 	}
-	else {
+	else
+	{
 		varOffset[var] = top;
 		top += 4;
 		objectCodes.push_back(string("sw ") + reg + " " + to_string(varOffset[var]) + "($sp)");
@@ -74,7 +87,8 @@ void ObjectCodeGenerator::storeVar(string reg, string var) {
 	Avalue[var].insert(var);
 }
 
-void ObjectCodeGenerator::releaseVar(string var) {
+void ObjectCodeGenerator::releaseVar(string var)
+{
 	for (set<string>::iterator iter = Avalue[var].begin(); iter != Avalue[var].end(); iter++) {
 		if ((*iter)[0] == '$') {
 			Rvalue[*iter].erase(var);
@@ -390,7 +404,8 @@ void ObjectCodeGenerator::analyseBlock(map<string, vector<Block> >*funcBlocks) {
 	}
 }
 
-void ObjectCodeGenerator::outputIBlocks(ostream& out) {
+void ObjectCodeGenerator::outputIBlocks(ostream& out) 
+{
 	for (map<string, vector<IBlock> >::iterator iter = funcIBlocks.begin(); iter != funcIBlocks.end(); iter++) {
 		out << "[" << iter->first << "]" << endl;
 		for (vector<IBlock>::iterator bIter = iter->second.begin(); bIter != iter->second.end(); bIter++) {
@@ -407,11 +422,13 @@ void ObjectCodeGenerator::outputIBlocks(ostream& out) {
 	}
 }
 
-void ObjectCodeGenerator::outputIBlocks() {
+void ObjectCodeGenerator::outputIBlocks() 
+{
 	outputIBlocks(cout);
 }
 
-void ObjectCodeGenerator::outputIBlocks(const char* fileName) {
+void ObjectCodeGenerator::outputIBlocks(const char* fileName) 
+{
 	ofstream fout;
 	fout.open(fileName);
 	if (!fout.is_open()) {
@@ -423,8 +440,10 @@ void ObjectCodeGenerator::outputIBlocks(const char* fileName) {
 	fout.close();
 }
 
-void ObjectCodeGenerator::outputObjectCode(ostream& out) {
-	for (vector<string>::iterator iter = objectCodes.begin(); iter != objectCodes.end(); iter++) {
+void ObjectCodeGenerator::outputObjectCode(ostream& out) 
+{
+	for (vector<string>::iterator iter = objectCodes.begin(); iter != objectCodes.end(); iter++)
+	{
 		out << *iter << endl;
 	}
 }

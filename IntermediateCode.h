@@ -13,13 +13,6 @@ private:
 
 class IntermediateCode
 {
-private:
-	vector<Quaternary> code;
-	map<string, vector<Block> >funcBlocks;
-	NewIndex nl;
-
-	void output(ostream& out);
-	void outputBlocks(ostream& out);
 public:
 	void emit(Quaternary q);
 	void emit(string op, string src1, string src2, string des);
@@ -31,4 +24,12 @@ public:
 	void outputBlocks(const char* fileName);
 	map<string, vector<Block> >*getFuncBlock();
 	int nextQuad();
+
+private:
+	vector<Quaternary> code;                  // 四元式代码
+	map<string, vector<Block> >funcBlocks;    // 
+	NewIndex nl;                              // 
+
+	void output(ostream& out);
+	void outputBlocks(ostream& out);
 };

@@ -1,10 +1,11 @@
 #pragma once
 #include "Common.h"
 
-class VarInfomation {
+class VarInfomation 
+{
 public:
-	int next;//待用信息
-	bool active;//活跃信息
+	int next;      //待用信息
+	bool active;   //活跃信息
 
 	VarInfomation(int next, bool active);
 	VarInfomation(const VarInfomation&other);
@@ -12,7 +13,8 @@ public:
 	void output(ostream& out);
 };
 
-class QuaternaryWithInfo {
+class QuaternaryWithInfo 
+{
 public:
 	Quaternary q;
 	VarInfomation info1;
@@ -23,7 +25,8 @@ public:
 	void output(ostream& out);
 };
 
-struct IBlock {
+struct IBlock 
+{
 	string name;
 	vector<QuaternaryWithInfo> codes;
 	int next1;
@@ -32,7 +35,8 @@ struct IBlock {
 
 //保存临时常数 t0 t1寄存器
 //保存函数的返回值 v0寄存器
-class ObjectCodeGenerator {
+class ObjectCodeGenerator
+{
 private:
 	map<string,vector<IBlock> >funcIBlocks;
 	map<string, set<string> >Avalue;
