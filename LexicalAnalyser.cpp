@@ -258,14 +258,19 @@ Token LexicalAnalyser::getNextToken()
 			if (isdigit(c))
 			{
 				bool flag_float = 0;
+				double number = 0;
 				string buf;
 				buf.push_back(c);
+				number *= 10;
+				number += 1.0 * (c - '0');
 				while (c=src.peek())
 				{
 					if (isdigit(c)) 
 					{
 						src >> c;
 						buf += c;
+						number *= 10;
+						number += 1.0 * (c - '0');
 					}
 					else 
 					{
@@ -274,6 +279,7 @@ Token LexicalAnalyser::getNextToken()
 				}
 				if (c == '.')
 				{
+					double quan = 0.1;
 					flag_float = 1;
 					buf += '.';
 					src.get();
@@ -283,6 +289,8 @@ Token LexicalAnalyser::getNextToken()
 						{
 							src >> c;
 							buf += c;
+							number += quan * (c - '0');
+							quan *= 0.1;
 						}
 						else
 						{
@@ -292,6 +300,7 @@ Token LexicalAnalyser::getNextToken()
 				}
 				if (c == 'e' || c == 'E')
 				{
+					double number1 = 0;
 					bool flag = false;
 					src.get();
 					buf += 'e';
@@ -311,13 +320,25 @@ Token LexicalAnalyser::getNextToken()
 						{
 							src >> c;
 							buf += c;
+							number1 *= 10;
+							number1 += c - '0';
 						}
 						else
 						{
 							break;
 						}
 					}
-					return Token(NUM_FLOAT, buf);
+					if (flag)
+					{
+						number1 = -number1;
+					}
+					string result = to_string(number * pow(10, number1));
+					result.erase(result.find_last_not_of('0') + 1);
+					if (result.back() == '.') 
+					{
+						result.pop_back();
+					}
+					return Token(NUM_FLOAT, result);
 				}
 				if (flag_float)
 				{
