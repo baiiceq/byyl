@@ -261,6 +261,8 @@ Token LexicalAnalyser::getNextToken()
 				double number = 0;
 				string buf;
 				buf.push_back(c);
+				number *= 10;
+				number += 1.0 * (c - '0');
 				while (c=src.peek())
 				{
 					if (isdigit(c)) 
@@ -268,7 +270,7 @@ Token LexicalAnalyser::getNextToken()
 						src >> c;
 						buf += c;
 						number *= 10;
-						number += c - '0';
+						number += 1.0 * (c - '0');
 					}
 					else 
 					{
@@ -328,9 +330,15 @@ Token LexicalAnalyser::getNextToken()
 					}
 					if (flag)
 					{
-						number1 = 0 - number1;
+						number1 = -number1;
 					}
-					return Token(NUM_FLOAT, to_string(number * pow(10, number1)));
+					string result = to_string(number * pow(10, number1));
+					result.erase(result.find_last_not_of('0') + 1);
+					if (result.back() == '.') 
+					{
+						result.pop_back();
+					}
+					return Token(NUM_FLOAT, result);
 				}
 				if (flag_float)
 				{
