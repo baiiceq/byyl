@@ -2,7 +2,7 @@
 
 bool isVar(string name) 
 {
-	return isalpha(name[0]);
+	return isalpha(name[0]) || name[0] == '$';
 }
 
 bool isNum(string name) 
@@ -40,14 +40,14 @@ void VarInfomation::output(ostream& out)
 {
 	out << "(";
 	if (next == -1)
-		out << "^";
+		out << "_";
 	else
 		out << next;
 	out << ",";
 	if (active)
 		out << "y";
 	else
-		out << "^";
+		out << "n";
 
 	out << ")";
 }
@@ -243,18 +243,23 @@ string ObjectCodeGenerator::getReg() {
 	return ret;
 }
 
-void ObjectCodeGenerator::analyseBlock(map<string, vector<Block> >*funcBlocks) {
-	for (map<string, vector<Block> >::iterator fbiter = funcBlocks->begin(); fbiter != funcBlocks->end(); fbiter++) {
+void ObjectCodeGenerator::analyseBlock(map<string, vector<Block> >*funcBlocks)
+{
+	for (map<string, vector<Block> >::iterator fbiter = funcBlocks->begin(); fbiter != funcBlocks->end(); fbiter++) 
+	{
 		vector<IBlock> iBlocks;
 		vector<Block>& blocks = fbiter->second;
 		vector<set<string> >INL, OUTL, DEF, USE;
 
 		//活跃变量的数据流方程
 		//确定DEF，USE
-		for (vector<Block>::iterator biter = blocks.begin(); biter != blocks.end(); biter++) {
+		for (vector<Block>::iterator biter = blocks.begin(); biter != blocks.end(); biter++) 
+		{
 			set<string>def, use;
-			for (vector<Quaternary>::iterator citer = biter->codes.begin(); citer != biter->codes.end(); citer++) {
-				if (citer->op == "j" || citer->op == "call") {
+			for (vector<Quaternary>::iterator citer = biter->codes.begin(); citer != biter->codes.end(); citer++) 
+			{
+				if (citer->op == "j" || citer->op == "call") 
+				{
 					//pass
 				}
 				else if (citer->op[0] == 'j') {//j>= j<=,j==,j!=,j>,j<

@@ -22,12 +22,11 @@ int main()
 	IntermediateCode optimized_code = optimizer.get_optimization_result();
 	optimized_code.outputBlocks("optimized_block.txt");
 
-	/*ObjectCodeGenerator objectCodeGenerator;
-	objectCodeGenerator.analyseBlock(code->getFuncBlock());
-	objectCodeGenerator.outputIBlocks();*/
-	//objectCodeGenerator.generateCode();
-	//objectCodeGenerator.outputObjectCode();
-	//objectCodeGenerator.outputObjectCode("program.asm");
+	ObjectCodeGenerator objectCodeGenerator;
+	objectCodeGenerator.analyseBlock(optimized_code.getFuncBlock());
+	objectCodeGenerator.outputIBlocks("active_information.txt");
+	objectCodeGenerator.generateCode();
+	objectCodeGenerator.outputObjectCode("objective_code.txt");
 
 	return 0;
 }
