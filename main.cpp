@@ -1,6 +1,7 @@
 #include"LexicalAnalyser.h"
 #include "ParserAndSemanticAnalyser.h"
 #include "ObjectCodeGenerator.h"
+#include "Optimizer.h"
 int main() 
 {
 	LexicalAnalyser lexicalAnalyser("test.txt");
@@ -15,6 +16,11 @@ int main()
 	IntermediateCode* code = parserAndSemanticAnalyser.getIntermediateCode();
 	code->divideBlocks(parserAndSemanticAnalyser.getFuncEnter());
 	code->outputBlocks("initial_block.txt");
+
+	Optimizer optimizer(*code);
+	optimizer.optimize();
+	IntermediateCode optimized_code = optimizer.get_optimization_result();
+	optimized_code.outputBlocks("optimized_block.txt");
 
 	/*ObjectCodeGenerator objectCodeGenerator;
 	objectCodeGenerator.analyseBlock(code->getFuncBlock());
