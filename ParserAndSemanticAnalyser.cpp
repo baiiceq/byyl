@@ -48,7 +48,7 @@ NewTemper::NewTemper()
 
 string NewTemper::new_temp() 
 {
-	return string("T") + to_string(now++);
+	return string("$T") + to_string(now++);
 }
 
 Symbol::Symbol() 
@@ -940,6 +940,10 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					Expression* expression = (Expression*)popSymbol();
 					Symbol* assign = popSymbol();
 					Id* ID = (Id*)popSymbol();
+					if (lookUpVar(ID->name) == nullptr)
+					{
+						outputError(string("语法错误：第") + to_string(line_count) + "行，变量" + ID->name + "未声明--葛神");
+					}
 					Symbol* assign_sentence = new Symbol(reduce_pro.left);
 					code.emit("=", expression->name, "_", ID->name);
 					pushSymbol(assign_sentence);
@@ -1226,7 +1230,8 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 				case 58://factor ::= ID
 				{
 					Id* ID = (Id*)popSymbol();
-					if (lookUpVar(ID->name) == NULL) {
+					if (lookUpVar(ID->name) == nullptr)
+					{
 						outputError(string("语法错误：第") + to_string(line_count) + "行，变量" + ID->name + "未声明");
 					}
 					Factor* factor = new Factor(reduce_pro.left);
