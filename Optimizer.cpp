@@ -27,8 +27,6 @@ void Optimizer::optimize_block(vector<Quaternary>& qs)
 
 		if (op == "=")
 		{
-            if (src1 == "@RETURN_PLACE")continue;
-
             bind_variable_to_node(src1, result, variable_map, dag_nodes, "=");
 		}
         else if (op == "+" || op == "-" || op == "*" || op == "/")
@@ -129,7 +127,7 @@ void Optimizer::optimize_block(vector<Quaternary>& qs)
 
     for (auto q : qs)
     {
-        if (is_control_statement(q) || q.src1 == "@RETURN_PLACE")
+        if (is_control_statement(q))
         {
             new_qs.push_back(q);
         }
