@@ -1239,13 +1239,33 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(factor);
 					break;
 				}
-				case 59://argument_list ::= 
+				case 59://factor ::= - factor
+				{
+					Factor* factor = (Factor*)popSymbol();
+					Symbol* sub = popSymbol();
+					Factor* new_factor = new Factor(reduce_pro.left);
+					new_factor->name = nt.new_temp();
+					code.emit("-", "0", factor->name, new_factor->name);
+					pushSymbol(new_factor);
+					break;
+				}
+				case 60://factor ::= + factor
+				{
+					Factor* factor = (Factor*)popSymbol();
+					Symbol* sub = popSymbol();
+					Factor* new_factor = new Factor(reduce_pro.left);
+					new_factor->name = nt.new_temp();
+					code.emit("+", "0", factor->name, new_factor->name);
+					pushSymbol(new_factor);
+					break;
+				}
+				case 61://argument_list ::= 
 				{
 					ArgumentList* argument_list = new ArgumentList(reduce_pro.left);
 					pushSymbol(argument_list);
 					break;
 				}
-				case 60://argument_list ::= expression
+				case 62://argument_list ::= expression
 				{
 					Expression* expression = (Expression*)popSymbol();
 					ArgumentList* argument_list = new ArgumentList(reduce_pro.left);
@@ -1253,7 +1273,7 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(argument_list);
 					break;
 				}
-				case 61://argument_list1 ::= expression , argument_list2
+				case 63://argument_list1 ::= expression , argument_list2
 				{
 					ArgumentList* argument_list2 = (ArgumentList*)popSymbol();
 					Symbol* comma = popSymbol();
