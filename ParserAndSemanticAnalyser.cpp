@@ -109,6 +109,9 @@ Factor::Factor(const Symbol& sym) : Symbol(sym) {}
 
 ArgumentList::ArgumentList(const Symbol& sym) : Symbol(sym) {}
 
+Initializer::Initializer(const Symbol& sym) : Symbol(sym) {}
+
+
 bool isVT(string s)
 {
 	if (s == "int" || s == "void" || s == "if" || s == "while" || s == "else" || s == "return" || s == "float" || s == "char")
@@ -627,23 +630,24 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 	state_stack.push(0);
 	for (list<Token>::iterator iter = words.begin(); iter != words.end(); ) 
 	{
-		outputSymbolStack(out);
-		outputStateStack(out);
 		LexicalType LT = iter->first;
 		string word = iter->second;
 
 		//ºöÂÔÐÐ×¢ÊÍºÍ¶Î×¢ÊÍ
-		if (LT == LCOMMENT || LT == PCOMMENT) 
+		if (LT == LCOMMENT || LT == PCOMMENT)
 		{
 			iter++;
 			continue;
 		}
-		if (LT == NEXTLINE) 
+		if (LT == NEXTLINE)
 		{
 			line_count++;
 			iter++;
 			continue;
 		}
+
+		outputSymbolStack(out);
+		outputStateStack(out);
 
 		Symbol* next_symbol;
 		if (LT == ID)
@@ -699,13 +703,18 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(new Symbol(reduce_pro.left));
 					break;
 				}
-				case 4://declare ::= int ID var_declare
+				case 4://declare ::= int ID initializer var_declare
 				{
 					Symbol* var_declare = popSymbol();
+					Initializer* initializer = (Initializer*)popSymbol();
 					Id* ID = (Id*)popSymbol();
 					Symbol* _int = popSymbol();
 					var_table.push_back(Var{ ID->name,D_INT,now_level });
 					pushSymbol(new Symbol(reduce_pro.left));
+					if (!initializer->name.empty())
+					{
+						code.emit("=", initializer->name, "_", ID->name);
+					}
 					break;
 				}
 				case 5://declare ::= float ID M A function_declare
@@ -719,13 +728,18 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(new Symbol(reduce_pro.left));
 					break;
 				}
-				case 6://declare ::= float ID var_declare
+				case 6://declare ::= float ID initializer var_declare 
 				{
 					Symbol* var_declare = popSymbol();
+					Initializer* initializer = (Initializer*)popSymbol();
 					Id* ID = (Id*)popSymbol();
 					Symbol* _float = popSymbol();
 					var_table.push_back(Var{ ID->name,D_FLOAT,now_level });
 					pushSymbol(new Symbol(reduce_pro.left));
+					if (!initializer->name.empty())
+					{
+						code.emit("=", initializer->name, "_", ID->name);
+					}
 					break;
 				}
 				case 7://declare ::= char ID M A function_declare
@@ -739,13 +753,18 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(new Symbol(reduce_pro.left));
 					break;
 				}
-				case 8://declare ::= char ID var_declare
+				case 8://declare ::= char ID initializer var_declare
 				{
 					Symbol* var_declare = popSymbol();
+					Initializer* initializer = (Initializer*)popSymbol();
 					Id* ID = (Id*)popSymbol();
 					Symbol* _char = popSymbol();
 					var_table.push_back(Var{ ID->name,D_CHAR,now_level });
 					pushSymbol(new Symbol(reduce_pro.left));
+					if (!initializer->name.empty())
+					{
+						code.emit("=", initializer->name, "_", ID->name);
+					}
 					break;
 				}
 				case 9://declare ::= void ID M A function_declare
@@ -861,28 +880,43 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(sentence_block);
 					break;
 				}
-				case 23://inner_var_declare ::= int ID
+				case 23://inner_var_declare ::= int ID initializer
 				{
+					Initializer* initializer = (Initializer*)popSymbol();
 					Id* ID = (Id*)popSymbol();
 					Symbol* _int = popSymbol();
 					pushSymbol(new Symbol(reduce_pro.left));
 					var_table.push_back(Var{ ID->name,D_INT,now_level });
+					if (!initializer->name.empty())
+					{
+						code.emit("=", initializer->name, "_", ID->name);
+					}
 					break;
 				}
-				case 24://inner_var_declare ::= float ID
+				case 24://inner_var_declare ::= float ID initializer
 				{
+					Initializer* initializer = (Initializer*)popSymbol();
 					Id* ID = (Id*)popSymbol();
 					Symbol* _float = popSymbol();
 					pushSymbol(new Symbol(reduce_pro.left));
 					var_table.push_back(Var{ ID->name,D_FLOAT,now_level });
+					if (!initializer->name.empty())
+					{
+						code.emit("=", initializer->name, "_", ID->name);
+					}
 					break;
 				}
-				case 25://inner_var_declare ::= char ID
+				case 25://inner_var_declare ::= char ID initializer
 				{
+					Initializer* initializer = (Initializer*)popSymbol();
 					Id* ID = (Id*)popSymbol();
 					Symbol* _char = popSymbol();
 					pushSymbol(new Symbol(reduce_pro.left));
 					var_table.push_back(Var{ ID->name,D_CHAR,now_level });
+					if (!initializer->name.empty())
+					{
+						code.emit("=", initializer->name, "_", ID->name);
+					}
 					break;
 				}
 				case 26://sentence_list ::= sentence M sentence_list
@@ -1284,6 +1318,22 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 					pushSymbol(argument_list1);
 					break;
 				}
+				case 64://initializer ::=
+				{
+					Initializer* initializer = new Initializer(reduce_pro.left);
+					initializer->name = "";
+					pushSymbol(initializer);
+					break;
+				}
+				case 65://initializer ::= = expression
+				{
+					Expression* expression = (Expression*)popSymbol();
+					Symbol* assign = popSymbol();
+					Initializer* initializer = new Initializer(reduce_pro.left);
+					initializer->name = expression->name;
+					pushSymbol(initializer);
+					break;
+				}
 				default:
 					for (int i = 0; i < pop_symbol_cnt; i++)
 					{
@@ -1294,12 +1344,15 @@ void ParserAndSemanticAnalyser::analyse(list<Token>&words, ostream& out)
 			}
 		}
 		else if (bh.behavior == accept)
-		{//P ::= N declare_list
+		{
+			//P ::= N declare_list
 			acc = true;
 			Func*f = lookUpFunc("main");
 			popSymbol();
 			N* n = (N*)popSymbol();
 			code.back_patch(n->next_list, f->enter_point);
+			outputSymbolStack(out);
+			outputStateStack(out);
 			break;
 		}
 	}
@@ -1343,5 +1396,4 @@ IntermediateCode* ParserAndSemanticAnalyser::getIntermediateCode()
 	return &code;
 	return &code;
 }
-
 

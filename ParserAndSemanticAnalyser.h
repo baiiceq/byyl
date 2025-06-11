@@ -207,6 +207,13 @@ public:
 	ArgumentList(const Symbol& sym);
 };
 
+class Initializer :public Symbol
+{
+public:
+	string name;
+	Initializer(const Symbol& sym);
+};
+
 const Symbol symbol[] = 
 { 
 	{true,"int"},{true,"void"},{true,"if"},{true,"else"},{true,"while"},{true,"return"},
