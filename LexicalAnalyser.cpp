@@ -351,13 +351,13 @@ Token LexicalAnalyser::getNextToken()
 				}
 				return Token(NUM_INT, buf);
 			}
-			else if (isalpha(c) || c == '_')
+			else if (isalpha(c)) 
 			{
 				string buf;
 				buf.push_back(c);
 				while (c = src.peek()) 
 				{
-					if (isdigit(c) || isalpha(c) || c == '_')
+					if (isdigit(c)||isalpha(c)) 
 					{
 						src >> c;
 						buf += c;
