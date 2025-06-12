@@ -199,24 +199,25 @@ Token LexicalAnalyser::getNextToken()
 				string str = "";
 				while (isxdigit(src.peek()))
 				{
-					str += src.peek();
+					str += (char)src.peek();
+					cout << src.peek() << endl;
 					src.get();
 				}
 				long long num = 0;
 				for (char a : str)
 				{
 					num *= 16;
-					if (c >= '0' && c <= '9') 
+					if (a >= '0' && a <= '9') 
 					{
-						num += c - '0';
+						num += a - '0';
 					}
-					else if (c >= 'a' && c <= 'f') 
+					else if (a >= 'a' && a <= 'f') 
 					{
-						num += 10 + (c - 'a');
+						num += 10 + (a - 'a');
 					}
-					else if (c >= 'A' && c <= 'F') 
+					else if (a >= 'A' && a <= 'F') 
 					{
-						num += 10 + (c - 'A');
+						num += 10 + (a - 'A');
 					}
 				}
 				CI.push_back(to_string(num));
