@@ -5,12 +5,12 @@ NewIndex::NewIndex()
 	index = 1;
 }
 
-string NewIndex::newIndex()
+string NewIndex::newIndex()//生成唯一标签名
 {
 	return string("Label") + to_string(index++);
 }
 
-void IntermediateCode::divideBlocks(vector<pair<int, string> > funcEnter) 
+void IntermediateCode::divideBlocks(vector<pair<int, string> > funcEnter)// 划分基本块
 {
 	//对每一个函数块
 	for (vector<pair<int, string> >::iterator iter = funcEnter.begin(); iter != funcEnter.end(); iter++) 
@@ -150,7 +150,7 @@ void IntermediateCode::divideBlocks(vector<pair<int, string> > funcEnter)
 	}
 }
 
-void IntermediateCode::output(ostream& out) 
+void IntermediateCode::output(ostream& out)//输出
 {
 	int i = 0;
 	for (vector<Quaternary>::iterator iter = code.begin(); iter != code.end(); iter++, i++) 
@@ -183,7 +183,7 @@ void IntermediateCode::outputBlocks(ostream& out)
 	}
 }
 
-void IntermediateCode::emit(Quaternary q)
+void IntermediateCode::emit(Quaternary q)// 添加一个四元式
 {
 	code.push_back(q);
 }
@@ -193,7 +193,7 @@ void IntermediateCode::emit(string op, string src1, string src2, string des)
 	emit(Quaternary{ op,src1,src2,des });
 }
 
-void IntermediateCode::back_patch(list<int>next_list, int quad) 
+void IntermediateCode::back_patch(list<int>next_list, int quad)// 回填跳转目标
 {
 	for (list<int>::iterator iter = next_list.begin(); iter != next_list.end(); iter++) 
 	{
@@ -201,12 +201,12 @@ void IntermediateCode::back_patch(list<int>next_list, int quad)
 	}
 }
 
-void IntermediateCode::output() 
+void IntermediateCode::output()// 输出所有四元式到控制台
 {
 	output(cout);
 }
 
-void IntermediateCode::output(const char* fileName)
+void IntermediateCode::output(const char* fileName)// 输出所有四元式到文件
 {
 	ofstream fout;
 	fout.open(fileName);
