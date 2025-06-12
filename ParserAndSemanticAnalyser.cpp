@@ -48,7 +48,7 @@ NewTemper::NewTemper()
 
 string NewTemper::new_temp() 
 {
-	return string("$T") + to_string(now++);
+	return string("&T") + to_string(now++);
 }
 
 Symbol::Symbol() 

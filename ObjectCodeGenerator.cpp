@@ -2,7 +2,7 @@
 
 bool isVar(string name) 
 {
-	return isalpha(name[0]) || name[0] == '$';
+	return isalpha(name[0]) || name[0] == '&';
 }
 
 bool isNum(string name) 
@@ -389,6 +389,10 @@ void ObjectCodeGenerator::analyseBlock(map<string, vector<Block> >*funcBlocks)
 					}
 				}
 				else {
+					if (isVar(citer->q.des)) {
+						citer->info3 = symTables[blockIndex][citer->q.des];
+						symTables[blockIndex][citer->q.des] = VarInfomation{ -1,false };
+					}
 					if (isVar(citer->q.src1)) {
 						citer->info1 = symTables[blockIndex][citer->q.src1];
 						symTables[blockIndex][citer->q.src1] = VarInfomation{ codeIndex,true };
@@ -397,10 +401,7 @@ void ObjectCodeGenerator::analyseBlock(map<string, vector<Block> >*funcBlocks)
 						citer->info2 = symTables[blockIndex][citer->q.src2];
 						symTables[blockIndex][citer->q.src2] = VarInfomation{ codeIndex,true };
 					}
-					if (isVar(citer->q.des)) {
-						citer->info3 = symTables[blockIndex][citer->q.des];
-						symTables[blockIndex][citer->q.des] = VarInfomation{ -1,false };
-					}
+					
 				}
 			}
 		}
