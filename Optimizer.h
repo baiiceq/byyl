@@ -106,7 +106,7 @@ private:
 
 	bool is_temp_variable(const std::string& var)
 	{
-		return !var.empty() && var[0] == '$';
+		return !var.empty() && var[0] == '&';
 	}
 
 	void generate_from_dag_node(
